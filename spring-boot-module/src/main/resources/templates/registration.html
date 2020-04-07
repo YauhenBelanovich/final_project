@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>add new user</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"
+          href="/static/css/bootstrap.min.css">
+</head>
+
+<body>
+<div class="p-3 mb-2 bg-light text-dark page-holder bg-cover">
+    <div class="container">
+        <nav class="navbar navbar-light bg-light">
+            <a class="navbar-brand" th:href="@{/users}">
+                <img src="/images/doc.png" th:href="@{/images/doc.png}" width="35" height="35" class="d-inline-block align-top" alt="">
+                <b>Enter information about yourself</b>
+            </a>
+        </nav>
+        <form action="/users/new" method="post" th:object="${user}" th:action="@{/users/new}">
+
+            <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Last Name</span>
+                </div>
+                <input th:field="*{lastName}" type="text" class="form-control" aria-label="Sizing example input"
+                       aria-describedby="inputGroup-sizing-default" placeholder="Latin letters only (max 40)">
+            </div>
+
+            <span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">First Name</span>
+                </div>
+                <input th:field="*{firstName}" type="text" class="form-control" aria-label="Sizing example input"
+                       aria-describedby="inputGroup-sizing-default" placeholder="Latin letters only (max 20)">
+            </div>
+
+            <span th:if="${#fields.hasErrors('patronymic')}" th:errors="*{patronymic}"></span>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Patronymic</span>
+                </div>
+                <input th:field="*{patronymic}" type="text" class="form-control" aria-label="Sizing example input"
+                       aria-describedby="inputGroup-sizing-default" placeholder="Latin letters only (max 40)">
+            </div>
+
+            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+            <span th:text="${userAlreadyExistsError}" style="color:red"></span>
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Email</span>
+                </div>
+                <input th:field="*{email}" type="email" class="form-control" aria-label="Sizing example input"
+                       aria-describedby="inputGroup-sizing-default" placeholder="Enter email">
+            </div>
+
+            <div class="form-check form-check-inline">
+                <input th:field="*{role}" class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="ADMINISTRATOR">
+                <label class="form-check-label" for="inlineRadio1">Administrator</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input th:field="*{role}" class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="SALE_USER">
+                <label class="form-check-label" for="inlineRadio2">Sale User</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input th:field="*{role}" class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="CUSTOMER_USER">
+                <label class="form-check-label" for="inlineRadio2">Customer User</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input th:field="*{role}" class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4" value="SECURE_API_USER">
+                <label class="form-check-label" for="inlineRadio2">Secure API User</label>
+            </div>
+            <button type="submit" class="btn btn-info">Save</button>
+            <small class="form-text text-muted">
+                Select privilege level
+            </small>
+        </form>
+    </div>
+</div>
+<script src="../static/js/bootstrap.min.js" th:href="@{/js/bootstrap.min.js}"></script>
+<script src="../static/js/popper.min.js" th:href="@{/js/popper.min.js}"></script>
+<script src="../static/js/jquery-3.4.1.slim.min.js" th:href="@{/js/jquery-3.4.1.slim.min.js}"></script>
+</body>
+
+</html>
