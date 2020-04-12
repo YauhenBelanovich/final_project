@@ -33,7 +33,7 @@ public class MailSendingUtil {
         try {
             message.setFrom(new InternetAddress(senderMail));
             InternetAddress toAddress = new InternetAddress(destinationMail);
-            
+
             message.addRecipient(Message.RecipientType.TO, toAddress);
 
             message.setSubject(mailHeader);
@@ -42,9 +42,9 @@ public class MailSendingUtil {
             transport.connect(host, senderMail, senderPassword);
             transport.sendMessage(message, message.getAllRecipients());
             transport.close();
-        }
-        catch (MessagingException e) {
+        } catch (MessagingException e) {
             logger.error(e.getMessage());
         }
     }
+
 }

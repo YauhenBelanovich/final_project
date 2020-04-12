@@ -113,7 +113,7 @@ public class UserServiceImpl implements UserService {
         userRepository.remove(user);
     }
 
-    public UserDTO convertDatabaseObjectToDTO(User user) {
+    private UserDTO convertDatabaseObjectToDTO(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setEmail(user.getEmail());

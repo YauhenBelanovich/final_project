@@ -40,7 +40,7 @@
                     </tr>
                     </thead>
 
-                    <tbody th:each="user: ${usersList}">
+                    <tbody th:each="user: ${users}">
                     <tr>
                         <td th:text="${user.id}"></td>
                         <td th:text="${user.lastName + ' ' + user.firstName + ' ' + user.patronymic}"></td>

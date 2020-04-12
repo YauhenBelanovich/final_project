@@ -35,7 +35,7 @@ public class UserController {
     @GetMapping
     public String getUsersList(@RequestParam(value = "page", defaultValue = "1") String page, Model model) {
         List<UserDTO> userDTOList = userService.getUsersByPage(page);
-        model.addAttribute("usersList", userDTOList);
+        model.addAttribute("users", userDTOList);
         model.addAttribute("administratorEmail", AdministratorConstant.ADMINISTRATOR_EMAIL);
         logger.debug("Get ItemList method");
         return "users";
@@ -49,7 +49,7 @@ public class UserController {
     }
 
     @PostMapping("/new")
-    public String addUser(@Valid @ModelAttribute(name = "user") AddUserDTO user, BindingResult errors, Model model, RedirectAttributes redirectAttributes) {
+    public String addUser(@Valid @ModelAttribute(name = "user") AddUserDTO user, BindingResult errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("user", user);
             return "registration";

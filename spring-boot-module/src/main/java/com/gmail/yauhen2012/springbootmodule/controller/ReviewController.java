@@ -25,7 +25,8 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final UserService userService;
 
-    public ReviewController(ReviewService reviewService, UserService userService) {this.reviewService = reviewService;
+    public ReviewController(ReviewService reviewService, UserService userService) {
+        this.reviewService = reviewService;
         this.userService = userService;
     }
 
@@ -38,8 +39,8 @@ public class ReviewController {
                 .stream()
                 .map(userService::findUserById)
                 .collect(Collectors.toList());
-        model.addAttribute("reviewList", reviewDTOList);
-        model.addAttribute("userDTOList", userDTOList);
+        model.addAttribute("reviews", reviewDTOList);
+        model.addAttribute("users", userDTOList);
         logger.debug("Get reviewList method");
         return "reviews";
     }

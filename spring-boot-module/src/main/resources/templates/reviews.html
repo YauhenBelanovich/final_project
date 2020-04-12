@@ -36,9 +36,9 @@
                     </tr>
                     </thead>
 
-                    <tbody th:each="review: ${reviewList}">
+                    <tbody th:each="review: ${reviews}">
                     <tr>
-                        <td th:each="user:${userDTOList}"
+                        <td th:each="user:${users}"
                             th:if="${review.userId.equals(user.id)}"
                             th:text="${user.lastName + ' ' + user.firstName + ' ' + user.patronymic}">
                         </td>

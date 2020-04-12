@@ -20,7 +20,8 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
 
     public ReviewServiceImpl(ReviewRepository reviewRepository) {
-        this.reviewRepository = reviewRepository;}
+        this.reviewRepository = reviewRepository;
+    }
 
     @Override
     @Transactional
@@ -28,8 +29,6 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = convertAddReviewDTOToDatabaseReview(addReviewDTO);
         reviewRepository.add(review);
     }
-
-
 
     @Override
     @Transactional
@@ -64,7 +63,9 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = reviewRepository.findById(id);
         if (review.getStatus()) {
             review.setStatus(false);
-        } else review.setStatus(true);
+        } else {
+            review.setStatus(true);
+        }
         reviewRepository.merge(review);
     }
 

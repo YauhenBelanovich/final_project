@@ -44,8 +44,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http.authorizeRequests()
-                .antMatchers("/items/**").hasRole(RoleEnum.CUSTOMER_USER.name())
-                .antMatchers("/shops/**").hasRole(RoleEnum.ADMINISTRATOR.name())
+                .antMatchers("/news/**").hasRole(RoleEnum.CUSTOMER_USER.name())
+                .antMatchers("/users/**", "/reviews/**").hasRole(RoleEnum.ADMINISTRATOR.name())
                 .and()
                 .formLogin().loginPage("/login")
                 .successHandler(myAuthenticationSuccessHandler())
