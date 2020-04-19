@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="1" author="yauhen2012@gmail.com">
+        <createTable tableName="user">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="email" type="varchar(50)">
+                <constraints unique="true"/>
+            </column>
+            <column name="password" type="varchar(70)"/>
+            <column name="role" type="varchar(16)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="2" author="yauhen2012@gmail.com">
+        <createTable tableName="user_details">
+            <column name="user_id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="last_name" type="varchar(40)"/>
+            <column name="first_name" type="varchar(20)"/>
+            <column name="patronymic" type="varchar(40)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="3" author="yauhen2012@gmail.com">
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="user_details"
+                                 constraintName="fk_user_details_to_user"
+                                 onDelete="CASCADE"
+                                 onUpdate="NO ACTION"
+                                 referencedColumnNames="id"
+                                 referencedTableName="user"
+                                 validate="true"/>
+    </changeSet>
+    <changeSet id="4" author="yauhen2012@gmail.com">
+        <createTable tableName="review">
+            <column name="review_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="text" type="varchar(300)"/>
+            <column name="created_by"
+                    type="DATETIME"
+                    defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="is_active" type="TINYINT(1)"/>
+            <column name="user_id" type="BIGINT">
+                <constraints foreignKeyName="user_id"
+                             referencedColumnNames="user(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="5" author="yauhen2012@gmail.com">
+        <insert tableName="user">
+            <column name="email" value="yauhen2012@gmail.com"/>
+            <column name="password" value="$2y$12$Y6kbQ8Sd1Jbgg6/MaIg5OuBk5BZ4YwhIIyJzX35q.h50PZb6RHima"/>
+            <column name="role" value="ADMINISTRATOR"/>
+        </insert>
+    </changeSet>
+    <changeSet id="6" author="yauhen2012@gmail.com">
+        <insert tableName="user_details">
+            <column name="user_id" value="1"/>
+            <column name="last_name" value="Adminov"/>
+            <column name="first_name" value="Admin"/>
+            <column name="patronymic" value="Adminovich"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
