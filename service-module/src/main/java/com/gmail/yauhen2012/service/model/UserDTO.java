@@ -1,5 +1,8 @@
 package com.gmail.yauhen2012.service.model;
 
+import java.util.List;
+
+import com.gmail.yauhen2012.repository.model.Article;
 import com.gmail.yauhen2012.repository.model.RoleEnum;
 
 public class UserDTO {
@@ -11,6 +14,7 @@ public class UserDTO {
     private String email;
     private String password;
     private RoleEnum role;
+    private List<Article> articles;
 
     public Long getId() {
         return id;

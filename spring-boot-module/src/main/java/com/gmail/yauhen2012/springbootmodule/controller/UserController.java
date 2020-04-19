@@ -9,6 +9,7 @@ import com.gmail.yauhen2012.service.UserService;
 import com.gmail.yauhen2012.service.exception.UserExistsException;
 import com.gmail.yauhen2012.service.model.AddUserDTO;
 import com.gmail.yauhen2012.service.model.UserDTO;
+import com.gmail.yauhen2012.service.model.UserInformationDTO;
 import com.gmail.yauhen2012.springbootmodule.constant.AdministratorConstant;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -91,6 +92,16 @@ public class UserController {
         userService.changeRole(id, role);
         logger.debug("Get new password method");
         return "redirect:/users";
+    }
+
+    @GetMapping("/{id}")
+    public String getUserById(@PathVariable Long id, Model model) {
+        UserDTO userDTO = userService.findUserById(id);
+        UserInformationDTO userInformationDTO = userService.findUserInformationById(id);
+        model.addAttribute("user", userDTO);
+        model.addAttribute("userInfo", userInformationDTO);
+        logger.debug("Get articleById method");
+        return "user_info";
     }
 
 }

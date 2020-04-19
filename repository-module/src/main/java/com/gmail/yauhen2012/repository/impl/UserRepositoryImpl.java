@@ -1,6 +1,7 @@
 package com.gmail.yauhen2012.repository.impl;
 
 import java.lang.invoke.MethodHandles;
+import java.util.List;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -27,6 +28,20 @@ public class UserRepositoryImpl extends GenericDAOImpl<Long, User> implements Us
             logger.error(e.getMessage(), e);
         }
         return null;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<User> getUsersByPageSortedByEmail(
+            int startPosition,
+            int itemsByPage
+    ) {
+        String query = "from " + entityClass.getName() + " u ORDER BY u.email ASC";
+        Query q = entityManager.createQuery(query);
+        q.setFirstResult(startPosition);
+        q.setMaxResults(itemsByPage);
+
+        return q.getResultList();
     }
 
 }

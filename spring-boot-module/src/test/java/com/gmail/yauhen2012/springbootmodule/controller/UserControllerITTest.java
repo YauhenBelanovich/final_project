@@ -15,6 +15,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -70,17 +71,30 @@ public class UserControllerITTest {
                     post("/users/new")
                             .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                             .param("role", "CUSTOMER_USER")
-                    .param("email", "test@test.test")
-            ).andExpect(status().isOk());
+                    .param("email", "t@test.test")
+            ).andExpect(status().isFound());
         }
 
     @Test
     @WithMockUser(roles = "ADMINISTRATOR")
     @Sql({"/data.sql"})
-    public void getDocuments_returnAllDocuments() throws Exception {
+    public void getUsers_returnAllUsers() throws Exception {
         mvc.perform(
                 get("/users")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMINISTRATOR")
+    @Sql({"/data.sql"})
+    public void getUser_returnOK() throws Exception {
+        mvc.perform(
+                get("/users/1")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                        .param("id", "1")
+        ).andExpect(status().isOk())
+                .andExpect(view()
+                        .name("user_info"));
     }
 }

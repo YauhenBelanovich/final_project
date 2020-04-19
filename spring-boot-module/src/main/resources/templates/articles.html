@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <title>articles</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"
+          href="/static/css/bootstrap.min.css">
+</head>
+
+<body>
+<div class="p-3 mb-2 bg-light text-dark page-holder bg-cover">
+    <div class="container">
+        <span sec:authorize="isAuthenticated()">
+            <a th:href="@{/logout}" class="btn btn-light btn-lg float-right" role="button" aria-pressed="true">Sign Out</a>
+            <a th:href="@{/profile}" class="btn btn-light btn-lg float-right" role="button" aria-pressed="true">Personal</a>
+        </span>
+        <nav class="navbar navbar-light bg-light">
+            <a class="navbar-brand" th:href="@{/articles}">
+                <img src="/images/news.jpg" th:href="@{/images/news.jpg}" width="100" height="100"
+                     class="pull-left img-responsive thumb margin10 img-thumbnail">
+                <h1>Articles</h1>
+            </a>
+        </nav>
+
+        <div class="container">
+            <div id="blog" class="row">
+                <div class="col-md-10 blogShort" th:each="article: ${articles}">
+                    <h3 th:text="${article.articleName}"></h3>
+                    <img src="/images/hot_news.png" th:href="@{/images/hot_news.png}" width="70" height="70" alt="post img"
+                         class="pull-left img-responsive thumb margin10 img-thumbnail">
+
+                    <em>Author <a th:href="@{/info/user/{id}(id=${article.userId})}" target="_blank"
+                                  th:each="user:${users}"
+                                  th:if="${article.userId.equals(user.id)}"
+                                  th:text="${user.lastName + ' ' + user.firstName}"></a></em>
+                    <em><a target="_blank"
+                           th:text="${article.date}"></a></em>
+                    <article th:text="${article.summary}"><p>
+                    </p></article>
+                    <a class="btn btn-success pull-right marginBottom10" th:href="@{/articles/{id}(id=${article.articleId})}">READ MORE</a>
+                </div>
+            </div>
+        </div>
+
+        <nav aria-label="...">
+            <ul class="pagination pagination-sm">
+                <li class="page-item">
+                    <a class="page-link" href="/?page=1" th:href="@{/articles}">1</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="/?page=2" th:href="@{/articles?page=2}">2</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="/?page=3" th:href="@{/articles?page=3}">3</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<script src="../static/js/bootstrap.min.js" th:href="@{/js/bootstrap.min.js}"></script>
+<script src="../static/js/popper.min.js" th:href="@{/js/popper.min.js}"></script>
+<script src="../static/js/jquery-3.4.1.slim.min.js" th:href="@{/js/jquery-3.4.1.slim.min.js}"></script>
+</body>
+
+</html>
