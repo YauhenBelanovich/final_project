@@ -6,10 +6,12 @@ import com.gmail.yauhen2012.service.UserService;
 import com.gmail.yauhen2012.service.model.AddUserDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -17,7 +19,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-@WebMvcTest(controllers = UserController.class)
+@WebMvcTest(controllers = UserController.class, excludeAutoConfiguration = UserDetailsServiceAutoConfiguration.class)
+@ActiveProfiles("test")
 class UserControllerTest {
 
     @Autowired
@@ -30,7 +33,7 @@ class UserControllerTest {
     private UserService userService;
 
     @Test
-    @WithMockUser(roles = "ADMINISTRATOR")
+    @WithMockUser
     void getUsersPage_returnOk() throws Exception {
         this.mockMvc.perform(
                 get("/users")
@@ -39,7 +42,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMINISTRATOR")
+    @WithMockUser
     void getAddUsersPage_returnOk() throws Exception {
         this.mockMvc.perform(
                 get("/users/new")
@@ -48,7 +51,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMINISTRATOR")
+    @WithMockUser
     void addUser_returnRedirect() throws Exception {
         AddUserDTO user = new AddUserDTO();
         user.setPassword("test");
@@ -61,7 +64,7 @@ class UserControllerTest {
         String content = objectMapper.writeValueAsString(user);
         mockMvc.perform(
                 post("/users/new")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(content)
         ).andExpect(status().isOk());
     }

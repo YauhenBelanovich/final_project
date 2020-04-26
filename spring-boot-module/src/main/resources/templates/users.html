@@ -14,7 +14,8 @@
 <div class="p-3 mb-2 bg-light text-dark page-holder bg-cover">
     <div class="container">
         <span sec:authorize="isAuthenticated()">
-            <a th:href="@{/logout}" class="btn btn-info btn-lg active float-right" role="button" aria-pressed="true">Sign Out</a>
+            <a th:href="@{/logout}" class="btn btn-light btn-lg float-right" role="button" aria-pressed="true">Sign Out</a>
+            <a th:href="@{/profile}" class="btn btn-light btn-lg float-right" role="button" aria-pressed="true">Personal</a>
         </span>
         <nav class="navbar navbar-light bg-light">
             <a class="navbar-brand" th:href="@{/users}">

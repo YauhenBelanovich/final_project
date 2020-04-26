@@ -61,4 +61,21 @@ public class UserControllerSecurityITTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    public void getUserWithoutRole_returnRedirect() throws Exception {
+        mvc.perform(
+                get("/users/1")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
+                .andExpect(status().isFound());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMINISTRATOR")
+    public void getUser_returnOk() throws Exception {
+        mvc.perform(
+                get("/users/1")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
+                .andExpect(status().isOk());
+    }
+
 }

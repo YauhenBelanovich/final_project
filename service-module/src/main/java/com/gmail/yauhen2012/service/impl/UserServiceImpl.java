@@ -1,6 +1,5 @@
 package com.gmail.yauhen2012.service.impl;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
@@ -8,28 +7,31 @@ import javax.transaction.Transactional;
 import com.gmail.yauhen2012.repository.UserRepository;
 import com.gmail.yauhen2012.repository.model.RoleEnum;
 import com.gmail.yauhen2012.repository.model.User;
+import com.gmail.yauhen2012.repository.model.UserContactInformation;
 import com.gmail.yauhen2012.repository.model.UserDetails;
 import com.gmail.yauhen2012.service.UserService;
 import com.gmail.yauhen2012.service.constant.PaginationConstant;
 import com.gmail.yauhen2012.service.exception.UserExistsException;
 import com.gmail.yauhen2012.service.model.AddUserDTO;
 import com.gmail.yauhen2012.service.model.UserDTO;
-import com.gmail.yauhen2012.service.util.MailSendingUtil;
+import com.gmail.yauhen2012.service.model.UserInformationDTO;
+import com.gmail.yauhen2012.service.util.MailUtil;
 import com.gmail.yauhen2012.service.util.PaginationUtil;
 import com.gmail.yauhen2012.service.util.PasswordGeneratorUtil;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import static com.gmail.yauhen2012.service.constant.MailConstant.EMAIL_HEADER;
-import static com.gmail.yauhen2012.service.constant.MailConstant.SENDER_MAILBOX_ACCESS_PASSWORD;
-import static com.gmail.yauhen2012.service.constant.MailConstant.SENDER_NAME;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final MailUtil mailUtil;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository) {this.userRepository = userRepository;}
+    public UserServiceImpl(UserRepository userRepository, MailUtil mailUtil, PasswordEncoder passwordEncoder) {this.userRepository = userRepository;
+        this.mailUtil = mailUtil;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     @Transactional
@@ -60,11 +62,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public List<UserDTO> getUsersByPage(String page) {
         int pageInt = Integer.parseInt(page);
-        List<User> itemList = userRepository.getObjectsByPage(
+        List<User> itemList = userRepository.getUsersByPageSortedByEmail(
                 PaginationUtil.findStartPosition(pageInt),
                 PaginationConstant.ITEMS_BY_PAGE
         );
-        itemList.sort(Comparator.comparing(User::getEmail));
         return itemList.stream()
                 .map(this::convertDatabaseObjectToDTO)
                 .collect(Collectors.toList());
@@ -82,7 +83,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void changePassword(Long id) {
         String password = PasswordGeneratorUtil.generateRandomPassword();
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String hashedPassword = passwordEncoder.encode(password);
 
         User user = userRepository.findById(id);
@@ -92,11 +92,7 @@ public class UserServiceImpl implements UserService {
         String contentOfTheLetter = user.getUserDetails().getFirstName() + " "
                 + user.getUserDetails().getLastName() + " your password: "
                 + password;
-        MailSendingUtil.sendFromGMail(SENDER_NAME,
-                SENDER_MAILBOX_ACCESS_PASSWORD,
-                user.getEmail(),
-                EMAIL_HEADER,
-                contentOfTheLetter);
+        mailUtil.sendEmail(user.getEmail(), contentOfTheLetter);
     }
 
     @Override
@@ -111,6 +107,56 @@ public class UserServiceImpl implements UserService {
     public void deleteUserById(Long id) {
         User user = userRepository.findById(id);
         userRepository.remove(user);
+    }
+
+    @Override
+    @Transactional
+    public UserInformationDTO findUserInformationById(Long id) {
+        User user = userRepository.findById(id);
+        return getUserInformationDTOFromUser(user);
+    }
+
+    @Override
+    @Transactional
+    public void update(UserInformationDTO userInformation) {
+
+        User user = userRepository.findById(userInformation.getUserId());
+
+        if (!userInformation.getNewPassword().equals("")) {
+            String hashedPassword = passwordEncoder.encode(userInformation.getNewPassword());
+            user.setPassword(hashedPassword);
+        }
+
+        UserDetails userDetails = new UserDetails();
+        userDetails.setUserId(userInformation.getUserId());
+        userDetails.setFirstName(userInformation.getFirstName());
+        userDetails.setLastName(userInformation.getLastName());
+        userDetails.setPatronymic(user.getUserDetails().getPatronymic());
+
+        user.setUserDetails(userDetails);
+        userDetails.setUser(user);
+
+        UserContactInformation userContactInformation = new UserContactInformation();
+        userContactInformation.setUserId(userInformation.getUserId());
+        userContactInformation.setAddress(userInformation.getAddress());
+        userContactInformation.setTelephone(userInformation.getTelephone());
+
+        user.setUserContactInformation(userContactInformation);
+        userContactInformation.setUser(user);
+
+        userRepository.merge(user);
+    }
+
+    private UserInformationDTO getUserInformationDTOFromUser(User user) {
+        UserInformationDTO userInformationDTO = new UserInformationDTO();
+        userInformationDTO.setUserId(user.getId());
+        userInformationDTO.setFirstName(user.getUserDetails().getFirstName());
+        userInformationDTO.setLastName(user.getUserDetails().getLastName());
+        if (user.getUserContactInformation() != null) {
+            userInformationDTO.setAddress(user.getUserContactInformation().getAddress());
+            userInformationDTO.setTelephone(user.getUserContactInformation().getTelephone());
+        }
+        return userInformationDTO;
     }
 
     private UserDTO convertDatabaseObjectToDTO(User user) {
@@ -133,17 +179,13 @@ public class UserServiceImpl implements UserService {
         user.setEmail(addUserDTO.getEmail());
 
         String password = PasswordGeneratorUtil.generateRandomPassword();
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String hashedPassword = passwordEncoder.encode(password);
 
         String contentOfTheLetter = addUserDTO.getFirstName() + " "
                 + addUserDTO.getLastName() + " your password: "
                 + password;
-        MailSendingUtil.sendFromGMail(SENDER_NAME,
-                SENDER_MAILBOX_ACCESS_PASSWORD,
-                addUserDTO.getEmail(),
-                EMAIL_HEADER,
-                contentOfTheLetter);
+
+        mailUtil.sendEmail(addUserDTO.getEmail(), contentOfTheLetter);
 
         user.setPassword(hashedPassword);
         user.setRole(addUserDTO.getRole());
@@ -154,5 +196,4 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email);
         return user != null;
     }
-
 }

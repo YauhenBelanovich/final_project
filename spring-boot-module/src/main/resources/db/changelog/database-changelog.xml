@@ -67,4 +67,74 @@
             <column name="patronymic" value="Adminovich"/>
         </insert>
     </changeSet>
+    <changeSet id="7" author="yauhen2012@gmail.com">
+        <createTable tableName="article">
+            <column name="article_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="article_name" type="varchar(50)"/>
+            <column name="date"
+                    type="DATETIME"
+                    defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="summary" type="varchar(200)"/>
+            <column name="user_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="8" author="yauhen2012@gmail.com">
+        <createTable tableName="article_content">
+            <column name="article_id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="text" type="varchar(1000)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="9" author="yauhen2012@gmail.com">
+        <addForeignKeyConstraint baseColumnNames="article_id"
+                                 baseTableName="article_content"
+                                 constraintName="fk_article_content_to_article"
+                                 onDelete="CASCADE"
+                                 onUpdate="NO ACTION"
+                                 referencedColumnNames="article_id"
+                                 referencedTableName="article"
+                                 validate="true"/>
+    </changeSet>
+
+
+    <changeSet id="10" author="yauhen2012@gmail.com">
+        <createTable tableName="comment">
+            <column name="comment_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="text" type="varchar(200)"/>
+            <column name="date"
+                    type="DATETIME"
+                    defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="article_id" type="BIGINT">
+                <constraints foreignKeyName="user_id"
+                             referencedColumnNames="user(id)"/>
+            </column>
+            <column name="user_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="11" author="yauhen2012@gmail.com">
+        <createTable tableName="user_contact_information">
+            <column name="user_id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="address" type="varchar(40)"/>
+            <column name="telephone" type="varchar(20)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="12" author="yauhen2012@gmail.com">
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="user_contact_information"
+                                 constraintName="fk_user_contact_information_to_user"
+                                 onDelete="CASCADE"
+                                 onUpdate="NO ACTION"
+                                 referencedColumnNames="id"
+                                 referencedTableName="user"
+                                 validate="true"/>
+    </changeSet>
 </databaseChangeLog>
