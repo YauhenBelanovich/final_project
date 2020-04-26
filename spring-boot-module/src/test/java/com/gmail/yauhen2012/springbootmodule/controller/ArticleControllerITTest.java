@@ -13,7 +13,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -25,7 +24,7 @@ public class ArticleControllerITTest {
     private MockMvc mvc;
 
     @Test
-    @WithMockUser(roles = "ADMINISTRATOR")
+    @WithMockUser(roles = "SALE_USER")
     @Sql({"/data.sql"})
     public void getArticles_returnAllArticles() throws Exception {
         mvc.perform(
@@ -34,16 +33,4 @@ public class ArticleControllerITTest {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    @WithMockUser(roles = "ADMINISTRATOR")
-    @Sql({"/data.sql"})
-    public void getArticle_returnOK() throws Exception {
-        mvc.perform(
-                get("/articles/1")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                        .param("id", "1")
-        ).andExpect(status().isOk())
-                .andExpect(view()
-                        .name("article"));
-    }
 }

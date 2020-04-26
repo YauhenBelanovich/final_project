@@ -9,4 +9,5 @@ public interface UserRepository extends GenericDAO<Long, User> {
     User findByEmail(String email);
 
     List<User> getUsersByPageSortedByEmail(int startPosition, int itemsByPage);
+
 }

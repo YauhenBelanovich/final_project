@@ -76,6 +76,20 @@ public class ArticleServiceImpl implements ArticleService {
         articleRepository.remove(article);
     }
 
+    @Override
+    @Transactional
+    public void update(ArticleDTO articleDTO) {
+        Article article = articleRepository.findById(articleDTO.getArticleId());
+
+        article.setArticleName(articleDTO.getArticleName());
+        ArticleContent articleContent = article.getArticleContent();
+        articleContent.setText(articleDTO.getText());
+        article.setArticleContent(articleContent);
+        article.setSummary(getSummary(articleDTO.getText()));
+
+        articleRepository.merge(article);
+    }
+
     private ArticleDTO convertDatabaseArticleWithoutContentToDTO(Article article) {
         ArticleDTO articleDTO = new ArticleDTO();
         articleDTO.setArticleId(article.getArticleId());

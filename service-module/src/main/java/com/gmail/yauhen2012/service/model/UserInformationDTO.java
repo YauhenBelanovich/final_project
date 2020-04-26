@@ -1,7 +1,9 @@
 package com.gmail.yauhen2012.service.model;
 
+import java.util.Objects;
 
 public class UserInformationDTO {
+
     private Long userId;
     private String address;
     private String telephone;
@@ -55,6 +57,28 @@ public class UserInformationDTO {
 
     public void setNewPassword(String newPassword) {
         this.newPassword = newPassword;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        UserInformationDTO that = (UserInformationDTO) o;
+        return Objects.equals(userId, that.userId) &&
+                Objects.equals(address, that.address) &&
+                Objects.equals(telephone, that.telephone) &&
+                Objects.equals(firstName, that.firstName) &&
+                Objects.equals(lastName, that.lastName) &&
+                Objects.equals(newPassword, that.newPassword);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, address, telephone, firstName, lastName, newPassword);
     }
 
 }

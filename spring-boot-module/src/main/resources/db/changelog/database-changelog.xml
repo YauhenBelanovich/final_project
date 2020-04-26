@@ -54,7 +54,7 @@
     </changeSet>
     <changeSet id="5" author="yauhen2012@gmail.com">
         <insert tableName="user">
-            <column name="email" value="yauhen2012@gmail.com"/>
+            <column name="email" value="yauhen.belanovich.test@gmail.com"/>
             <column name="password" value="$2y$12$Y6kbQ8Sd1Jbgg6/MaIg5OuBk5BZ4YwhIIyJzX35q.h50PZb6RHima"/>
             <column name="role" value="ADMINISTRATOR"/>
         </insert>
@@ -98,8 +98,6 @@
                                  referencedTableName="article"
                                  validate="true"/>
     </changeSet>
-
-
     <changeSet id="10" author="yauhen2012@gmail.com">
         <createTable tableName="comment">
             <column name="comment_id" type="BIGINT" autoIncrement="true">
@@ -116,8 +114,6 @@
             <column name="user_id" type="BIGINT"/>
         </createTable>
     </changeSet>
-
-
     <changeSet id="11" author="yauhen2012@gmail.com">
         <createTable tableName="user_contact_information">
             <column name="user_id" type="BIGINT">
@@ -137,4 +133,47 @@
                                  referencedTableName="user"
                                  validate="true"/>
     </changeSet>
+    <changeSet id="13" author="yauhen2012@gmail.com">
+        <createTable tableName="item">
+            <column name="item_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="item_Name" type="varchar(40)"/>
+            <column name="description" type="varchar(200)"/>
+            <column name="price" type="DECIMAL(12,2)"/>
+            <column name="unique_number" type="varchar(16)">
+                <constraints unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="14" author="yauhen2012@gmail.com">
+        <createTable tableName="orders">
+            <column name="order_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="date"
+                    type="DATETIME"
+                    defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="status" type="varchar(16)"/>
+            <column name="user_id" type="BIGINT">
+                <constraints foreignKeyName="user_id"
+                             referencedColumnNames="user(id)"/>
+            </column>
+            <column name="total_price" type="DECIMAL(12,2)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="15" author="yauhen2012@gmail.com">
+        <createTable tableName="order_item">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="order_id" type="BIGINT">
+                <constraints foreignKeyName="order_id"
+                             referencedColumnNames="orders(order_id)"/>
+            </column>
+            <column name="item_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>

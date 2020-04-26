@@ -1,6 +1,7 @@
 package com.gmail.yauhen2012.service.model;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.gmail.yauhen2012.repository.model.Article;
 import com.gmail.yauhen2012.repository.model.RoleEnum;
@@ -72,6 +73,14 @@ public class UserDTO {
         this.role = role;
     }
 
+    public List<Article> getArticles() {
+        return articles;
+    }
+
+    public void setArticles(List<Article> articles) {
+        this.articles = articles;
+    }
+
     @Override
     public String toString() {
         return "UserDTO{" +
@@ -83,6 +92,30 @@ public class UserDTO {
                 ", password='" + password + '\'' +
                 ", role=" + role +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        UserDTO userDTO = (UserDTO) o;
+        return Objects.equals(id, userDTO.id) &&
+                Objects.equals(lastName, userDTO.lastName) &&
+                Objects.equals(firstName, userDTO.firstName) &&
+                Objects.equals(patronymic, userDTO.patronymic) &&
+                Objects.equals(email, userDTO.email) &&
+                Objects.equals(password, userDTO.password) &&
+                role == userDTO.role &&
+                Objects.equals(articles, userDTO.articles);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, lastName, firstName, patronymic, email, password, role, articles);
     }
 
 }

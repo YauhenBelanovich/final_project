@@ -46,7 +46,7 @@ public class Article {
 
     @OneToMany(fetch = FetchType.EAGER,
             cascade = {
-            CascadeType.PERSIST, CascadeType.MERGE
+                    CascadeType.PERSIST, CascadeType.MERGE
             }, orphanRemoval = true)
     @JoinColumn(name = "article_id")
     private List<Comment> comments;

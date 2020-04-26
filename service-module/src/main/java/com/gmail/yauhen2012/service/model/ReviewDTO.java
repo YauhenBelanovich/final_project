@@ -1,5 +1,7 @@
 package com.gmail.yauhen2012.service.model;
 
+import java.util.Objects;
+
 public class ReviewDTO {
 
     private Long reviewId;
@@ -46,6 +48,27 @@ public class ReviewDTO {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ReviewDTO reviewDTO = (ReviewDTO) o;
+        return Objects.equals(reviewId, reviewDTO.reviewId) &&
+                Objects.equals(text, reviewDTO.text) &&
+                Objects.equals(status, reviewDTO.status) &&
+                Objects.equals(createdBy, reviewDTO.createdBy) &&
+                Objects.equals(userId, reviewDTO.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(reviewId, text, status, createdBy, userId);
     }
 
 }

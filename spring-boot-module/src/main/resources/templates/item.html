@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <title>Item</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="/static/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="p-3 mb-2 bg-light text-dark page-holder bg-cover">
+    <div class="container">
+        <span sec:authorize="isAuthenticated()">
+        <a th:href="@{/logout}" class="btn btn-light btn-lg float-right" role="button" aria-pressed="true">Sign Out</a>
+        </span>
+        <nav class="navbar navbar-light bg-light">
+            <a class="navbar-brand" th:href="@{/items}">
+                <img src="/images/doc.png" th:href="@{/images/doc.png}" width="150" height="150" class="d-inline-block align-top" alt="">
+                <b>Item</b>
+            </a>
+        </nav>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 img">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvzOpl3-kqfNbPcA_u_qEZcSuvu5Je4Ce_FkTMMjxhB-J1wWin-Q" alt=""
+                     class="img-rounded">
+            </div>
+            <div class="col-md-6 details">
+                <blockquote>
+                    <h5 th:text="${item.itemName}"></h5>
+                    <small>Number: &emsp;<cite title="Source Title" th:text="${item.uniqueNumber}"><i
+                            class="icon-map-marker"></i></cite></small>
+                </blockquote>
+                <table>
+                    <tbody>
+                    <tr>
+                        <td>Price $: &emsp;</td>
+                        <td th:text="${item.price}"></td>
+                    </tr>
+                    <tr>
+                        <td>Description: &emsp;</td>
+                        <td th:text="${item.description}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../static/js/bootstrap.min.js" th:href="@{/js/bootstrap.min.js}"></script>
+<script src="../static/js/popper.min.js" th:href="@{/js/popper.min.js}"></script>
+<script src="../static/js/jquery-3.4.1.slim.min.js" th:href="@{/js/jquery-3.4.1.slim.min.js}"></script>
+</body>
+</html>

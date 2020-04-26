@@ -36,4 +36,5 @@ public class UserInfoControllerITTest {
                 .andExpect(view()
                         .name("user_info"));
     }
+
 }

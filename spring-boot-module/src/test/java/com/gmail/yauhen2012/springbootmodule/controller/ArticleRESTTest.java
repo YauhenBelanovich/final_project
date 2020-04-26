@@ -80,13 +80,6 @@ public class ArticleRESTTest {
     }
 
     @Test
-    public void getArticle_return200() throws Exception {
-        ResponseEntity<String> entity = template.withBasicAuth("testAdmin", "secret")
-                .getForEntity("/api/articles/1", String.class);
-        Assertions.assertEquals(HttpStatus.OK, entity.getStatusCode());
-    }
-
-    @Test
     public void deleteArticle_return200() throws Exception {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -107,4 +100,5 @@ public class ArticleRESTTest {
                 .exchange("/api/articles/1", HttpMethod.DELETE, httpEntity, String.class);
         Assertions.assertEquals(HttpStatus.FORBIDDEN, entity.getStatusCode());
     }
+
 }

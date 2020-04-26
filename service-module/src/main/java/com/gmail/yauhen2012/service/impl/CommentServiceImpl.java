@@ -22,7 +22,15 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.add(comment);
     }
 
-    private Comment convertAddCommentDTOToDatabaseComment(AddCommentDTO addCommentDTO) {
+    @Override
+    @Transactional
+    public Long deleteCommentById(Long id) {
+        Comment comment = commentRepository.findById(id);
+        commentRepository.remove(comment);
+        return comment.getArticleId();
+    }
+
+    private static Comment convertAddCommentDTOToDatabaseComment(AddCommentDTO addCommentDTO) {
         Comment comment = new Comment();
         comment.setArticleId(addCommentDTO.getArticleId());
         comment.setUserId(addCommentDTO.getUserId());

@@ -12,6 +12,12 @@ public class LoginController {
 
     private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
 
+    @GetMapping("/")
+    public String homePage() {
+        logger.debug("HomePage method");
+        return "home_page";
+    }
+
     @GetMapping("/login")
     public String login() {
         logger.debug("Login method");

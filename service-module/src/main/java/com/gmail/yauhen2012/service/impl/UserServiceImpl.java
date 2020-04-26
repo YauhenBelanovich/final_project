@@ -28,7 +28,8 @@ public class UserServiceImpl implements UserService {
     private final MailUtil mailUtil;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, MailUtil mailUtil, PasswordEncoder passwordEncoder) {this.userRepository = userRepository;
+    public UserServiceImpl(UserRepository userRepository, MailUtil mailUtil, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
         this.mailUtil = mailUtil;
         this.passwordEncoder = passwordEncoder;
     }
@@ -196,4 +197,5 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email);
         return user != null;
     }
+
 }

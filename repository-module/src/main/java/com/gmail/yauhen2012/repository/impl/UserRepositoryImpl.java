@@ -26,8 +26,8 @@ public class UserRepositoryImpl extends GenericDAOImpl<Long, User> implements Us
             return (User) query.getSingleResult();
         } catch (NoResultException e) {
             logger.error(e.getMessage(), e);
+            return null;
         }
-        return null;
     }
 
     @Override

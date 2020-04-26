@@ -44,9 +44,20 @@ public class User {
             orphanRemoval = true)
     private UserContactInformation userContactInformation;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    @OneToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    }, orphanRemoval = true)
     @JoinColumn(name = "user_id")
     private List<Review> reviews;
+
+    @OneToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            }, orphanRemoval = true)
+    @JoinColumn(name = "user_id")
+    private List<Order> orders;
 
     public Long getId() {
         return id;
@@ -104,6 +115,14 @@ public class User {
         this.userContactInformation = userContactInformation;
     }
 
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -119,12 +138,13 @@ public class User {
                 role == user.role &&
                 Objects.equals(userDetails, user.userDetails) &&
                 Objects.equals(userContactInformation, user.userContactInformation) &&
-                Objects.equals(reviews, user.reviews);
+                Objects.equals(reviews, user.reviews) &&
+                Objects.equals(orders, user.orders);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, password, role, userDetails, userContactInformation, reviews);
+        return Objects.hash(id, email, password, role, userDetails, userContactInformation, reviews, orders);
     }
 
 }

@@ -41,4 +41,5 @@ public class ProfileControllerITTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
         ).andExpect(status().isFound());
     }
+
 }

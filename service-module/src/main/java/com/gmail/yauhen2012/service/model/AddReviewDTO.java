@@ -1,17 +1,16 @@
 package com.gmail.yauhen2012.service.model;
 
 import java.util.Objects;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 public class AddReviewDTO {
 
-    @Size(min = 3, max = 40,
-            message = "Must be between 3 and 40 characters long")
+    @NotEmpty
+    @Size(min = 3, max = 300,
+            message = "Must be between 3 and 300 characters long")
     private String text;
-    @NotNull(message = "is required")
     private Boolean status;
-    @NotNull(message = "is required")
     private Long userId;
 
     public String getText() {

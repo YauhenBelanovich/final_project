@@ -16,7 +16,7 @@ public interface UserService {
 
     List<UserDTO> getUsersByPage(String page);
 
-    void changeRole(Long id,  RoleEnum role);
+    void changeRole(Long id, RoleEnum role);
 
     void changePassword(Long id);
 

@@ -1,6 +1,7 @@
 package com.gmail.yauhen2012.service.model;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.gmail.yauhen2012.repository.model.Comment;
 
@@ -68,6 +69,29 @@ public class ArticleDTO {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ArticleDTO that = (ArticleDTO) o;
+        return Objects.equals(articleId, that.articleId) &&
+                Objects.equals(articleName, that.articleName) &&
+                Objects.equals(date, that.date) &&
+                Objects.equals(summary, that.summary) &&
+                Objects.equals(text, that.text) &&
+                Objects.equals(userId, that.userId) &&
+                Objects.equals(comments, that.comments);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(articleId, articleName, date, summary, text, userId, comments);
     }
 
 }

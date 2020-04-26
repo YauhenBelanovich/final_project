@@ -63,17 +63,17 @@ public class UserControllerITTest {
                 .andExpect(redirectedUrl("/users"));
     }
 
-        @Test
-        @WithMockUser(roles = "ADMINISTRATOR")
-        @Sql({"/data.sql"})
-        public void createUser_returnRedirect() throws Exception {
-            mvc.perform(
-                    post("/users/new")
-                            .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                            .param("role", "CUSTOMER_USER")
-                    .param("email", "t@test.test")
-            ).andExpect(status().isFound());
-        }
+    @Test
+    @WithMockUser(roles = "ADMINISTRATOR")
+    @Sql({"/data.sql"})
+    public void createUser_returnRedirect() throws Exception {
+        mvc.perform(
+                post("/users/new")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                        .param("role", "CUSTOMER_USER")
+                        .param("email", "t@test.test")
+        ).andExpect(status().isFound());
+    }
 
     @Test
     @WithMockUser(roles = "ADMINISTRATOR")
@@ -97,4 +97,5 @@ public class UserControllerITTest {
                 .andExpect(view()
                         .name("user_info"));
     }
+
 }
