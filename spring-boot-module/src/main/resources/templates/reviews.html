@@ -18,7 +18,7 @@
             <a th:href="@{/profile}" class="btn btn-light btn-lg float-right" role="button" aria-pressed="true">Personal</a>
         </span>
         <nav class="navbar navbar-light bg-light">
-            <a class="navbar-brand" th:href="@{/users}">
+            <a class="navbar-brand" th:href="@{/}">
                 <img src="/images/doc.png" th:href="@{/images/doc.png}" width="35" height="35" class="d-inline-block align-top" alt="">
                 <b>Reviews</b>
             </a>
@@ -47,7 +47,8 @@
                         <td th:text="${review.createdBy}"></td>
                         <td>
 
-                            <form th:action="@{/reviews/{id}/newStatus(id=${review.reviewId})}" style="display:inline;" id="change_status_form">
+                            <form th:action="@{/reviews/{id}/newStatus(id=${review.reviewId})}" style="display:inline;"
+                                  id="change_status_form">
                                 <span class="button-checkbox">
                                   <button form="change_status_form" type="button" class="btn" data-color="primary">Show</button>
                                     <input th:if="${review.status}" onchange="this.form.submit()"

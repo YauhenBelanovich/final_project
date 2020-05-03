@@ -7,6 +7,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import com.gmail.yauhen2012.service.ItemService;
+import com.gmail.yauhen2012.service.exception.ItemExistsException;
 import com.gmail.yauhen2012.service.model.AddItemDTO;
 import com.gmail.yauhen2012.service.model.ItemDTO;
 import org.apache.logging.log4j.LogManager;
@@ -40,9 +41,15 @@ public class ItemAPIController {
         if (bindingResult.hasErrors()) {
             return getValidationMessage(bindingResult);
         }
-        logger.debug("POST API save Item method");
-        itemService.add(addItemDTO);
-        return "Added Successfully";
+        try {
+            logger.debug("POST API save Item method");
+            itemService.add(addItemDTO);
+            return "Added Successfully";
+        } catch (ItemExistsException e) {
+            logger.error(e.getMessage());
+            return "Item exist already";
+        }
+
     }
 
     @GetMapping
@@ -59,7 +66,7 @@ public class ItemAPIController {
 
     @DeleteMapping("/{id}")
     public String deleteItem(@PathVariable Long id) {
-        itemService.deleteArticleById(id);
+        itemService.deleteItemById(id);
         logger.debug("DELETE API deleteItem method");
         return "Deleted Successfully";
     }

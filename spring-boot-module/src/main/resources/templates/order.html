@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <title>order</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"
+          href="/static/css/bootstrap.min.css">
+</head>
+
+<body>
+<div class="p-3 mb-2 bg-light text-dark page-holder bg-cover">
+    <div class="container">
+        <span sec:authorize="isAuthenticated()">
+            <a th:href="@{/logout}" class="btn btn-light btn-lg float-right" role="button" aria-pressed="true">Sign Out</a>
+            <a th:href="@{/profile}" class="btn btn-light btn-lg float-right" role="button" aria-pressed="true">Personal</a>
+        </span>
+        <nav class="navbar navbar-light bg-light">
+            <a class="navbar-brand" th:href="@{/}">
+                <img src="/images/doc.png" th:href="@{/images/doc.png}" width="35" height="35" class="d-inline-block align-top" alt="">
+                <b>Order</b>
+            </a>
+        </nav>
+
+        <div class="row">
+            <div class="col">
+                <table class="table table-bordered table-striped">
+                    <thead class="table-info">
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Telephone</th>
+                        <th scope="col">Items</th>
+                        <th scope="col">Total Price</th>
+                    </tr>
+                    </thead>
+
+                    <tbody th:each="order: ${order}">
+                    <tr>
+                        <td th:text="${order.orderId}"></td>
+                        <td th:text="${order.date}"></td>
+                        <td>
+                            <form th:action="@{/orders/{id}/newStatus(id=${order.orderId})}" style="display:inline;" method="get">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-outline-secondary" type="submit">Change status</button>
+                                    </div>
+                                    <select class="custom-select" id="status" name="status">
+                                        <option th:each="state : ${T(com.gmail.yauhen2012.repository.model.OrderStatusEnum).values()}"
+                                                th:value="${state}"
+                                                th:text="${state}"
+                                                th:selected="${state.equals(order.status)}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </form>
+                        </td>
+                        <td th:text="${order.userEmail}"></td>
+                        <td th:text="${order.userTel}"></td>
+                        <td>
+                            <table class="table table-sm">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Quantity</th>
+                                </tr>
+                                </thead>
+                                <tbody th:each="details: ${order.orderDetailsDTOList}">
+                                <tr>
+                                    <td th:text="${details.itemName}"></td>
+                                    <td th:text="${details.quantity}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td th:text="${order.totalPrice}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <a th:href="@{/orders}" class="btn btn-info btn-lg active" role="button" aria-pressed="true">Back to orders list</a><br>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../static/js/bootstrap.min.js" th:href="@{/js/bootstrap.min.js}"></script>
+<script src="../static/js/popper.min.js" th:href="@{/js/popper.min.js}"></script>
+<script src="../static/js/jquery-3.4.1.slim.min.js" th:href="@{/js/jquery-3.4.1.slim.min.js}"></script>
+</body>
+
+</html>

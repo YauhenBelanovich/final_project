@@ -9,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -56,7 +55,7 @@ public class ArticleControllerSecurityITTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMINISTRATOR")
+    @WithMockUser(roles = "SALE_USER")
     public void getArticlesPage_returnOk() throws Exception {
         mvc.perform(
                 get("/articles")
@@ -64,14 +63,4 @@ public class ArticleControllerSecurityITTest {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    @WithMockUser(roles = "ADMINISTRATOR")
-    @Sql({"/data.sql"})
-    public void getArticle_returnOk() throws Exception {
-        mvc.perform(
-                get("/articles/1")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                        .param("id", "1"))
-                .andExpect(status().isOk());
-    }
 }

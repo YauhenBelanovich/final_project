@@ -35,4 +35,5 @@ class UserInfoControllerTest {
                 get("/info/user/1")
         ).andExpect(status().isOk());
     }
+
 }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <title>New review</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="/static/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="p-3 mb-2 bg-light text-dark page-holder bg-cover">
+    <div class="container">
+        <nav class="navbar navbar-light bg-light">
+            <a class="navbar-brand" th:href="@{/}">
+                <img src="/images/doc.png" th:href="@{/images/doc.png}" width="35" height="35" class="d-inline-block align-top" alt="">
+                <b>New review</b>
+            </a>
+        </nav>
+        <form action="/reviews/new" method="post" th:object="${review}" th:action="@{/reviews/new}">
+
+            <span th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></span>
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">Content</label>
+                <textarea th:field="*{text}" class="form-control" id="exampleFormControlTextarea1" rows="3"
+                          placeholder="max 300 characters"></textarea>
+            </div>
+            <button type="submit" class="btn btn-info">Save</button>
+        </form>
+    </div>
+</div>
+
+<script src="../static/js/bootstrap.min.js" th:href="@{/js/bootstrap.min.js}"></script>
+<script src="../static/js/popper.min.js" th:href="@{/js/popper.min.js}"></script>
+<script src="../static/js/jquery-3.4.1.slim.min.js" th:href="@{/js/jquery-3.4.1.slim.min.js}"></script>
+</body>
+</html>

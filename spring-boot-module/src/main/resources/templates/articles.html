@@ -16,9 +16,11 @@
         <span sec:authorize="isAuthenticated()">
             <a th:href="@{/logout}" class="btn btn-light btn-lg float-right" role="button" aria-pressed="true">Sign Out</a>
             <a th:href="@{/profile}" class="btn btn-light btn-lg float-right" role="button" aria-pressed="true">Personal</a>
+            <a sec:authorize="hasRole('SALE_USER')" th:href="@{/articles/new}" class="btn btn-light btn-lg float-right" role="button"
+               aria-pressed="true">Add article</a>
         </span>
         <nav class="navbar navbar-light bg-light">
-            <a class="navbar-brand" th:href="@{/articles}">
+            <a class="navbar-brand" th:href="@{/}">
                 <img src="/images/news.jpg" th:href="@{/images/news.jpg}" width="100" height="100"
                      class="pull-left img-responsive thumb margin10 img-thumbnail">
                 <h1>Articles</h1>
@@ -41,6 +43,8 @@
                     <article th:text="${article.summary}"><p>
                     </p></article>
                     <a class="btn btn-success pull-right marginBottom10" th:href="@{/articles/{id}(id=${article.articleId})}">READ MORE</a>
+                    <a sec:authorize="hasRole('SALE_USER')" class="btn btn-success pull-right marginBottom10"
+                       th:href="@{/articles/{id}/delete(id=${article.articleId})}">DELETE</a>
                 </div>
             </div>
         </div>

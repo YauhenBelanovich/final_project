@@ -12,9 +12,9 @@ public class TestAPIConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-
         auth.inMemoryAuthentication()
                 .passwordEncoder(passwordEncoder)
                 .withUser("testAdmin")
@@ -29,7 +29,6 @@ public class TestAPIConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
         http.antMatcher("/api/**")
                 .authorizeRequests()
                 .anyRequest().hasRole("ADMIN")
@@ -38,4 +37,5 @@ public class TestAPIConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable();
     }
+
 }

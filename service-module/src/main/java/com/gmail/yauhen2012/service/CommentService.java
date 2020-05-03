@@ -6,4 +6,6 @@ public interface CommentService {
 
     void add(AddCommentDTO addCommentDTO);
 
+    Long deleteCommentById(Long id);
+
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gmail.yauhen2012.repository.model.Comment;
 import com.gmail.yauhen2012.service.ArticleService;
+import com.gmail.yauhen2012.service.CommentService;
 import com.gmail.yauhen2012.service.UserService;
 import com.gmail.yauhen2012.service.model.ArticleDTO;
 import com.gmail.yauhen2012.service.model.UserDTO;
@@ -39,6 +40,9 @@ class ArticleControllerTest {
     @MockBean
     private UserService userService;
 
+    @MockBean
+    private CommentService commentService;
+
     @Test
     @WithMockUser
     void getArticlesPage_returnOk() throws Exception {
@@ -69,7 +73,7 @@ class ArticleControllerTest {
         when(userService.findUserById(1L)).thenReturn(userDTO);
         this.mockMvc.perform(
                 get("/articles/1")
-                .param("id", "1")
+                        .param("id", "1")
         ).andExpect(status().isOk()).andExpect(view().name("article"));
     }
 
