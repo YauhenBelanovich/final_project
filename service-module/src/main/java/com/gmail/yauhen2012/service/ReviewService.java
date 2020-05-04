@@ -13,8 +13,10 @@ public interface ReviewService {
 
     ReviewDTO findReviewById(Long id);
 
-    void deleteReviewById(Long id);
+    Boolean deleteReviewById(Long id);
 
-    void changeStatus(Long id);
+    Boolean changeStatus(Long id);
+
+    List<ReviewDTO> getReviewSortedByDate();
 
 }

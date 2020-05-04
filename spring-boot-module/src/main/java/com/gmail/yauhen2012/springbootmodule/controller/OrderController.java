@@ -3,17 +3,13 @@ package com.gmail.yauhen2012.springbootmodule.controller;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.gmail.yauhen2012.repository.model.OrderStatusEnum;
-import com.gmail.yauhen2012.service.ItemService;
 import com.gmail.yauhen2012.service.OrderService;
 import com.gmail.yauhen2012.service.UserService;
 import com.gmail.yauhen2012.service.model.AddOrderDTO;
 import com.gmail.yauhen2012.service.model.AppUser;
-import com.gmail.yauhen2012.service.model.ArticleDTO;
 import com.gmail.yauhen2012.service.model.OrderDTO;
-import com.gmail.yauhen2012.service.model.UserDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.core.Authentication;
@@ -32,12 +28,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class OrderController {
 
     private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
-    private final ItemService itemService;
     private final OrderService orderService;
     private final UserService userService;
 
-    public OrderController(ItemService itemService, OrderService orderService, UserService userService) {
-        this.itemService = itemService;
+    public OrderController(OrderService orderService, UserService userService) {
         this.orderService = orderService;
         this.userService = userService;
     }
@@ -73,61 +67,80 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public String getUserById(@PathVariable Long id, Model model) {
+    public String getOrderById(@PathVariable Long id, Model model) {
         OrderDTO orderDTO = orderService.findById(id);
-        model.addAttribute("order", orderDTO);
-        logger.debug("Get orderById method");
-        return "order";
+        if (orderDTO != null) {
+            model.addAttribute("order", orderDTO);
+            logger.debug("Get orderById method");
+            return "order";
+        }
+        logger.error("Get orderById method! No items found!!!");
+        return "redirect:/?error";
     }
 
     @GetMapping("/{id}/newStatus")
-    public String setNewRole(@PathVariable Long id, @RequestParam(name = "status") OrderStatusEnum status) {
-        orderService.changeStatus(id, status);
-        Long orderId = id;
-        logger.debug("Get new status method");
-        return "redirect:/orders/" + orderId;
+    public String setNewStatus(@PathVariable Long id, @RequestParam(name = "status") OrderStatusEnum status) {
+        if (orderService.changeStatus(id, status)) {
+            logger.debug("Get new status method");
+            return "redirect:/orders?success";
+        }
+        logger.error("Get newStatus method! No orders found!!!");
+        return "redirect:/orders?error";
     }
 
     @GetMapping("/cart")
     public String getCart(Model model) {
         Long userId = getCurrentUserId();
         OrderDTO orderDTO = orderService.findOrderByUserIdWithStatusNEW(userId);
-        model.addAttribute("order", orderDTO);
-        logger.debug("Get cart method");
-        return "cart";
+        if (orderDTO != null) {
+            model.addAttribute("order", orderDTO);
+            logger.debug("Get cart method");
+            return "cart";
+        }
+        logger.debug("Get cart method. Cart is empty");
+        return "redirect:/items?cartIsEmpty";
     }
 
     @GetMapping("/cart/item/delete")
-    public String deleteItemFromOrder(@RequestParam(value = "itemId", required = false) Long itemId,
-            @RequestParam(value = "orderId", required = false) Long orderId) {
+    public String deleteItemFromOrder(@RequestParam(value = "itemId") Long itemId,
+            @RequestParam(value = "orderId") Long orderId) {
 
-        orderService.deleteItemByIdFromOrder(orderId, itemId);
-        logger.debug("Get deleteItemByIdFromOrder method");
-        return "redirect:/orders/cart";
+        if (orderService.deleteItemByIdFromOrder(orderId, itemId)) {
+            logger.debug("Get deleteItemByIdFromOrder method");
+            return "redirect:/orders/cart";
+        }
+        logger.debug("Get deleteItemFromCart method. Something went wrong");
+        return "redirect:/orders/cart?error";
     }
 
     @GetMapping("/cart/editQuantity")
-    public String editItemQuantity(@RequestParam(value = "itemId", required = false) Long itemId,
-            @RequestParam(value = "orderId", required = false) Long orderId,
-            @RequestParam(value = "quantity", required = false) Long quantity) {
+    public String editItemQuantity(@RequestParam(value = "itemId") Long itemId,
+            @RequestParam(value = "orderId") Long orderId,
+            @RequestParam(value = "quantity") Long quantity) {
 
         if (quantity != null) {
             List<Long> itemIdsList = new ArrayList<>();
             for (int i = 0; i < quantity; i++) {
                 itemIdsList.add(itemId);
             }
-            orderService.deleteItemByIdFromOrder(orderId, itemId);
-            orderService.addItemsToOrder(orderId, itemIdsList);
+            if (orderService.deleteItemByIdFromOrder(orderId, itemId)) {
+                orderService.addItemsToOrder(orderId, itemIdsList);
+                logger.debug("Get editItemQuantity method");
+                return "redirect:/orders/cart";
+            }
         }
-        logger.debug("Get editItemQuantity method");
-        return "redirect:/orders/cart";
+        logger.debug("Get deleteItemFromCart method. Something went wrong");
+        return "redirect:/orders/cart?error";
     }
 
     @GetMapping("/cart/send")
-    public String sendCart(@RequestParam(value = "orderId", required = false) Long orderId) {
-        orderService.sendCart(orderId);
-        logger.debug("Get sendCart method");
-        return "redirect:/orders";
+    public String sendCart(@RequestParam(value = "orderId") Long orderId) {
+        if (orderService.sendCart(orderId)) {
+            logger.debug("Get sendCart method");
+            return "redirect:/orders";
+        }
+        logger.debug("Get deleteItemFromCart method. Something went wrong");
+        return "redirect:/orders/cart?error";
     }
 
     @GetMapping

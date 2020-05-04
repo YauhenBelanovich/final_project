@@ -13,7 +13,7 @@ public class AddItemDTO {
     @Size(max = 40, message = "Must be max 40 characters long")
     private String itemName;
     @NotEmpty(message = "is required")
-    @Size(max = 16, message = "Must be max 10 characters long")
+    @Size(max = 10, message = "Must be max 10 characters long")
     private String uniqueNumber;
     @NotNull(message = "is required")
     @Positive(message = "price should be positive")

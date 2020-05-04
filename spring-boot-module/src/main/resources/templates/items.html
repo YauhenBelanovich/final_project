@@ -26,8 +26,25 @@
             </a>
         </nav>
 
+        <div th:if="${param.cartIsEmpty}">
+            <div class="alert alert-danger">
+                Nothing in your cart! Add some items
+            </div>
+        </div>
+        <div th:if="${param.error}">
+            <div class="alert alert-danger">
+                Item not found!
+            </div>
+        </div>
+        <div th:if="${param.success}">
+            <div class="alert alert-info">
+                Successfully completed!
+            </div>
+        </div>
+
         <div class="row">
             <div class="col">
+                <span th:text="${noItemsSelectedMessage}" class="float-right"></span>
                 <table class="table table-bordered table-striped">
                     <thead class="table-info">
                     <tr>
@@ -85,6 +102,32 @@
                     </tr>
                     </tbody>
                 </table>
+
+                <section class="my-5" sec:authorize="hasRole('SALE_USER')">
+                    <div class="container">
+                        <div class="row">
+                            <div th:if="${param.invalidExtension}">
+                                <div class="alert alert-danger">
+                                    Invalid file extension!
+                                </div>
+                            </div>
+                            <div th:if="${param.emptyFile}">
+                                <div class="alert alert-danger">
+                                    File is empty or incorrectly filled!
+                                </div>
+                            </div>
+                            <div class="col-md-8 mx-auto">
+                                <h2>Upload XML File</h2>
+                                <form method="post" th:action="@{/items/uploadFile}" enctype="multipart/form-data">
+                                    <div class="form-group">
+                                        <input type="file" name="file" class="form-control-file">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Upload File</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
         <nav aria-label="...">

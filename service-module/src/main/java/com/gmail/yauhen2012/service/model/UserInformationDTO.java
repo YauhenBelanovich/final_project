@@ -1,14 +1,30 @@
 package com.gmail.yauhen2012.service.model;
 
 import java.util.Objects;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import com.gmail.yauhen2012.service.constant.ValidationConstant;
 
 public class UserInformationDTO {
 
     private Long userId;
+    @Pattern(regexp = ValidationConstant.ADDRESS_PATTERN,
+            message = "should be latin letters and numbers only")
     private String address;
+    @Pattern(regexp = ValidationConstant.NUMBERS_PATTERN,
+            message = "only numbers without spaces or other characters")
     private String telephone;
+    @NotEmpty(message = "Is required")
+    @Pattern(regexp = ValidationConstant.LATIN_LETTERS_PATTERN,
+            message = "should be latin letters only")
     private String firstName;
+    @NotEmpty(message = "Is required")
+    @Pattern(regexp = ValidationConstant.LATIN_LETTERS_PATTERN,
+            message = "should be latin letters only")
     private String lastName;
+    @Size(min = 8, max = 16, message = "Must be between 8 and 16 characters long")
     private String newPassword;
 
     public Long getUserId() {

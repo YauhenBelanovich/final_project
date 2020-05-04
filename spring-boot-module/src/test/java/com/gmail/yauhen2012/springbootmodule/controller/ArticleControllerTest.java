@@ -21,12 +21,15 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(controllers = ArticleController.class, excludeAutoConfiguration = UserDetailsServiceAutoConfiguration.class)
 @ActiveProfiles("test")
 class ArticleControllerTest {
+
+    private static final Long TEST_ID = 1L;
 
     @Autowired
     private MockMvc mockMvc;
@@ -77,4 +80,22 @@ class ArticleControllerTest {
         ).andExpect(status().isOk()).andExpect(view().name("article"));
     }
 
+    @Test
+    @WithMockUser
+    void getDeleteArticle_returnRedirect() throws Exception {
+        when(articleService.deleteArticleById(TEST_ID)).thenReturn(true);
+        this.mockMvc.perform(
+                get("/articles/1/delete")
+        ).andExpect(status().isFound())
+                .andExpect(redirectedUrl("/articles"));
+    }
+
+    @Test
+    @WithMockUser
+    void getArticlesNewPage_returnOk() throws Exception {
+        this.mockMvc.perform(
+                get("/articles/new")
+        ).andExpect(status().isOk())
+                .andExpect(view().name("article_new"));
+    }
 }

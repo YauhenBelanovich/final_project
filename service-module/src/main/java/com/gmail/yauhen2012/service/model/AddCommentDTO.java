@@ -6,10 +6,9 @@ import javax.validation.constraints.Size;
 
 public class AddCommentDTO {
 
-    @NotEmpty(message = "is required")
     private Long articleId;
-    @NotEmpty(message = "is required")
     private Long userId;
+    @NotEmpty(message = "need to write something")
     @Size(max = 200, message = "Must be max 200 characters long")
     private String text;
 

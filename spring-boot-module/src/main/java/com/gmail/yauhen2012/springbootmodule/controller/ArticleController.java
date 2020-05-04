@@ -10,6 +10,7 @@ import com.gmail.yauhen2012.service.ArticleService;
 import com.gmail.yauhen2012.service.CommentService;
 import com.gmail.yauhen2012.service.UserService;
 import com.gmail.yauhen2012.service.model.AddArticleDTO;
+import com.gmail.yauhen2012.service.model.AddCommentDTO;
 import com.gmail.yauhen2012.service.model.AppUser;
 import com.gmail.yauhen2012.service.model.ArticleDTO;
 import com.gmail.yauhen2012.service.model.UserDTO;
@@ -62,40 +63,55 @@ public class ArticleController {
     @GetMapping("/{id}")
     public String getArticleById(@PathVariable Long id, Model model) {
         ArticleDTO articleDTO = articleService.findById(id);
-        UserDTO userDTO = userService.findUserById(articleDTO.getUserId());
-        List<UserDTO> userDTOS = articleDTO.getComments()
-                .stream()
-                .map(Comment::getUserId)
-                .collect(Collectors.toSet())
-                .stream()
-                .map(userService::findUserById)
-                .collect(Collectors.toList());
-        model.addAttribute("article", articleDTO);
-        model.addAttribute("user", userDTO);
-        model.addAttribute("users", userDTOS);
-        logger.debug("Get articleById method");
-        return "article";
+        if (articleDTO != null) {
+            UserDTO userDTO = userService.findUserById(articleDTO.getUserId());
+            List<UserDTO> userDTOS = articleDTO.getComments()
+                    .stream()
+                    .map(Comment::getUserId)
+                    .collect(Collectors.toSet())
+                    .stream()
+                    .map(userService::findUserById)
+                    .collect(Collectors.toList());
+            model.addAttribute("article", articleDTO);
+            model.addAttribute("user", userDTO);
+            model.addAttribute("users", userDTOS);
+            logger.debug("Get articleById method");
+            return "article";
+        }
+        logger.error("Get articleById method! No articles found!!!");
+        return "redirect:/?error";
     }
 
     @GetMapping("/{id}/delete")
     public String deleteArticleById(@PathVariable Long id) {
-        articleService.deleteArticleById(id);
-        logger.debug("Get deleteArticleById method");
-        return "redirect:/articles";
+        if (articleService.deleteArticleById(id)) {
+            logger.debug("Get deleteArticleById method");
+            return "redirect:/articles";
+        }
+        logger.error("Get articleById method! No articles found!!!");
+        return "redirect:/?error";
     }
 
     @GetMapping("/comment/{id}/delete")
     public String deleteCommentById(@PathVariable Long id) {
         Long articleId = commentService.deleteCommentById(id);
-        logger.debug("Get deleteCommentById method");
-        return "redirect:/articles/" + articleId;
+        if (articleId != null) {
+            logger.debug("Get deleteCommentById method");
+            return "redirect:/articles/" + articleId;
+        }
+        logger.error("Get deleteCommentById method fell");
+        return "redirect:/?error";
     }
 
     @PostMapping("/edit")
-    public String articleEdit(@ModelAttribute(name = "article") ArticleDTO articleDTO, Model model) {
-        articleService.update(articleDTO);
-        logger.debug("Post addUser method");
-        return "redirect:/articles/" + articleDTO.getArticleId();
+    public String articleEdit(@ModelAttribute(name = "article") ArticleDTO articleDTO) {
+        if (articleService.update(articleDTO)) {
+            logger.debug("Post editArticle method");
+            return "redirect:/articles/" + articleDTO.getArticleId() + "?updateTrue";
+        } else {
+            logger.error("Post editArticle method fell");
+        }
+        return "redirect:/articles/" + articleDTO.getArticleId() + "?updateFalse";
     }
 
     @GetMapping("/new")
@@ -118,6 +134,27 @@ public class ArticleController {
                 logger.debug("Post addArticle method");
                 return "redirect:/articles";
             } else {
+                return "redirect:/login?logout";
+            }
+        }
+    }
+
+    @PostMapping("/{id}/comments/new")
+    public String addComment(@PathVariable Long id, @RequestParam(value = "text") String text) {
+        Long articleId = id;
+        if (text.isEmpty()) {
+            return "redirect:/articles/" + articleId + "?error";
+        } else {
+            if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDetails) {
+                AddCommentDTO commentDTO = new AddCommentDTO();
+                commentDTO.setUserId(getCurrentUserId());
+                commentDTO.setArticleId(articleId);
+                commentDTO.setText(text);
+                commentService.add(commentDTO);
+                logger.debug("Post addComment method");
+                return "redirect:/articles/" + articleId;
+            } else {
+                logger.error("Post addComment method fell!");
                 return "redirect:/login?logout";
             }
         }

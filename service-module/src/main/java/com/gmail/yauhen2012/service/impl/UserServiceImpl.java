@@ -74,33 +74,44 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void changeRole(Long id, RoleEnum role) {
+    public Boolean changeRole(Long id, RoleEnum role) {
         User user = userRepository.findById(id);
-        user.setRole(role);
-        userRepository.merge(user);
+        if (user != null) {
+            user.setRole(role);
+            userRepository.merge(user);
+            return true;
+        }
+        return false;
     }
 
     @Override
     @Transactional
-    public void changePassword(Long id) {
+    public Boolean changePassword(Long id) {
         String password = PasswordGeneratorUtil.generateRandomPassword();
         String hashedPassword = passwordEncoder.encode(password);
 
         User user = userRepository.findById(id);
-        user.setPassword(hashedPassword);
-        userRepository.merge(user);
+        if (user != null) {
+            user.setPassword(hashedPassword);
+            userRepository.merge(user);
 
-        String contentOfTheLetter = user.getUserDetails().getFirstName() + " "
-                + user.getUserDetails().getLastName() + " your password: "
-                + password;
-        mailUtil.sendEmail(user.getEmail(), contentOfTheLetter);
+            String contentOfTheLetter = user.getUserDetails().getFirstName() + " "
+                    + user.getUserDetails().getLastName() + " your password: "
+                    + password;
+            mailUtil.sendEmail(user.getEmail(), contentOfTheLetter);
+            return true;
+        }
+        return false;
     }
 
     @Override
     @Transactional
     public UserDTO findUserById(Long id) {
         User user = userRepository.findById(id);
-        return convertDatabaseObjectToDTO(user);
+        if (user != null) {
+            return convertDatabaseObjectToDTO(user);
+        }
+        return null;
     }
 
     @Override
@@ -119,33 +130,36 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void update(UserInformationDTO userInformation) {
+    public Boolean update(UserInformationDTO userInformation) {
 
         User user = userRepository.findById(userInformation.getUserId());
+        if (user != null) {
+            if (!userInformation.getNewPassword().equals("")) {
+                String hashedPassword = passwordEncoder.encode(userInformation.getNewPassword());
+                user.setPassword(hashedPassword);
+            }
 
-        if (!userInformation.getNewPassword().equals("")) {
-            String hashedPassword = passwordEncoder.encode(userInformation.getNewPassword());
-            user.setPassword(hashedPassword);
+            UserDetails userDetails = new UserDetails();
+            userDetails.setUserId(userInformation.getUserId());
+            userDetails.setFirstName(userInformation.getFirstName());
+            userDetails.setLastName(userInformation.getLastName());
+            userDetails.setPatronymic(user.getUserDetails().getPatronymic());
+
+            user.setUserDetails(userDetails);
+            userDetails.setUser(user);
+
+            UserContactInformation userContactInformation = new UserContactInformation();
+            userContactInformation.setUserId(userInformation.getUserId());
+            userContactInformation.setAddress(userInformation.getAddress());
+            userContactInformation.setTelephone(userInformation.getTelephone());
+
+            user.setUserContactInformation(userContactInformation);
+            userContactInformation.setUser(user);
+
+            userRepository.merge(user);
+            return true;
         }
-
-        UserDetails userDetails = new UserDetails();
-        userDetails.setUserId(userInformation.getUserId());
-        userDetails.setFirstName(userInformation.getFirstName());
-        userDetails.setLastName(userInformation.getLastName());
-        userDetails.setPatronymic(user.getUserDetails().getPatronymic());
-
-        user.setUserDetails(userDetails);
-        userDetails.setUser(user);
-
-        UserContactInformation userContactInformation = new UserContactInformation();
-        userContactInformation.setUserId(userInformation.getUserId());
-        userContactInformation.setAddress(userInformation.getAddress());
-        userContactInformation.setTelephone(userInformation.getTelephone());
-
-        user.setUserContactInformation(userContactInformation);
-        userContactInformation.setUser(user);
-
-        userRepository.merge(user);
+        return false;
     }
 
     private UserInformationDTO getUserInformationDTOFromUser(User user) {
@@ -166,18 +180,24 @@ public class UserServiceImpl implements UserService {
         userDTO.setEmail(user.getEmail());
         userDTO.setPassword(user.getPassword());
         userDTO.setRole(user.getRole());
+        userDTO.setDeleted(user.getDeleted());
 
-        if (user.getUserDetails() != null) {
-            userDTO.setLastName(user.getUserDetails().getLastName());
-            userDTO.setFirstName(user.getUserDetails().getFirstName());
-            userDTO.setPatronymic(user.getUserDetails().getPatronymic());
-        }
+            if (user.getUserDetails() != null) {
+                if (user.getDeleted()) {
+                    userDTO.setLastName("(deleted)" + user.getUserDetails().getLastName());
+                } else {
+                    userDTO.setLastName(user.getUserDetails().getLastName());
+                }
+                userDTO.setFirstName(user.getUserDetails().getFirstName());
+                userDTO.setPatronymic(user.getUserDetails().getPatronymic());
+            }
         return userDTO;
     }
 
     private User convertAddUserDTOToDatabaseUser(AddUserDTO addUserDTO) {
         User user = new User();
         user.setEmail(addUserDTO.getEmail());
+        user.setDeleted(false);
 
         String password = PasswordGeneratorUtil.generateRandomPassword();
         String hashedPassword = passwordEncoder.encode(password);

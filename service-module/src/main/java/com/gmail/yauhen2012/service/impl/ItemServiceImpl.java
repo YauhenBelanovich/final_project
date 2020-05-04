@@ -1,18 +1,24 @@
 package com.gmail.yauhen2012.service.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
+import javax.xml.parsers.ParserConfigurationException;
 
 import com.gmail.yauhen2012.repository.ItemRepository;
 import com.gmail.yauhen2012.repository.model.Item;
 import com.gmail.yauhen2012.service.ItemService;
+import com.gmail.yauhen2012.service.constant.ItemConstant;
 import com.gmail.yauhen2012.service.constant.PaginationConstant;
 import com.gmail.yauhen2012.service.exception.ItemExistsException;
 import com.gmail.yauhen2012.service.model.AddItemDTO;
 import com.gmail.yauhen2012.service.model.ItemDTO;
 import com.gmail.yauhen2012.service.util.PaginationUtil;
+import com.gmail.yauhen2012.service.util.ParseXMLUtil;
 import org.springframework.stereotype.Service;
+import org.xml.sax.SAXException;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -44,14 +50,21 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public ItemDTO findById(Long id) {
         Item item = itemRepository.findById(id);
-        return convertDatabaseItemToDTO(item);
+        if (item != null) {
+            return convertDatabaseItemToDTO(item);
+        }
+        return null;
     }
 
     @Override
     @Transactional
-    public void deleteItemById(Long id) {
+    public Boolean deleteItemById(Long id) {
         Item item = itemRepository.findById(id);
-        itemRepository.remove(item);
+        if (item != null) {
+            itemRepository.remove(item);
+            return true;
+        }
+        return false;
 
     }
 
@@ -66,6 +79,37 @@ public class ItemServiceImpl implements ItemService {
         return itemList.stream()
                 .map(this::convertDatabaseItemToDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public Boolean copyItem(Long id) {
+        Item item = itemRepository.findById(id);
+        if (item != null) {
+            Item newItem = new Item();
+            newItem.setItemName(item.getItemName());
+            newItem.setDescription(item.getDescription());
+            newItem.setPrice(item.getPrice());
+            if (item.getUniqueNumber().contains(ItemConstant.PREFIX_ITEMS_COPY)) {
+                newItem.setUniqueNumber(item.getUniqueNumber());
+            } else {
+                newItem.setUniqueNumber(item.getUniqueNumber() + ItemConstant.PREFIX_ITEMS_COPY);
+            }
+            itemRepository.add(newItem);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    @Transactional
+    public Boolean loadItemsFromFile(File file) throws ParserConfigurationException, ItemExistsException, SAXException, IOException {
+        List<Item> items = ParseXMLUtil.parseItems(file);
+        if (!items.isEmpty()) {
+            items.forEach(itemRepository::add);
+            return true;
+        }
+        return false;
     }
 
     private Item convertAddItemDTOToDatabaseItem(AddItemDTO addItemDTO) {

@@ -14,7 +14,10 @@
 <div class="p-3 mb-2 bg-light text-dark page-holder bg-cover">
     <div class="container">
         <span sec:authorize="isAuthenticated()">
+             <a sec:authorize="hasRole('CUSTOMER_USER')" th:href="@{/orders/cart}" class="btn btn-light btn-lg float-right" role="button"
+                aria-pressed="true">Cart</a>
         <a th:href="@{/logout}" class="btn btn-light btn-lg float-right" role="button" aria-pressed="true">Sign Out</a>
+        <a th:href="@{/profile}" class="btn btn-light btn-lg float-right" role="button" aria-pressed="true">Personal</a>
         </span>
         <nav class="navbar navbar-light bg-light">
             <a class="navbar-brand" th:href="@{/}">
@@ -24,7 +27,11 @@
             </a>
         </nav>
     </div>
-
+    <div th:if="${param.error}">
+        <div class="alert alert-danger">
+            Carefully, incorrect request!
+        </div>
+    </div>
     <div class="container">
         <div class="row">
             <div sec:authorize="hasRole('ADMINISTRATOR')" class="col-md-6 details">
@@ -35,7 +42,6 @@
                 <a th:href="@{/articles}" class="btn btn-success btn-sm" role="button" aria-pressed="true">Articles page</a>
                 <a th:href="@{/items}" class="btn btn-success btn-sm" role="button" aria-pressed="true">Items page</a>
                 <a th:href="@{/orders}" class="btn btn-success btn-sm" role="button" aria-pressed="true">Orders page</a>
-                <a th:href="@{/reviews/new}" class="btn btn-success btn-sm" role="button" aria-pressed="true">Leave feedback</a>
             </div>
             <div sec:authorize="hasRole('SALE_USER')" class="col-md-6 details">
                 <a th:href="@{/articles}" class="btn btn-success btn-sm" role="button" aria-pressed="true">Articles page</a>
@@ -43,11 +49,30 @@
                 <a th:href="@{/orders}" class="btn btn-success btn-sm" role="button" aria-pressed="true">Orders page</a>
             </div>
             <div class="col-md-6 img">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvzOpl3-kqfNbPcA_u_qEZcSuvu5Je4Ce_FkTMMjxhB-J1wWin-Q" alt=""
+                <img src="/images/shop-start.jpg" th:href="@{/images/shop-start.jpg}" width="700" height="500" alt=""
                      class="img-rounded">
             </div>
         </div>
     </div>
+
+    <div class="container">
+        <h3>Store reviews</h3>
+        <a sec:authorize="hasRole('CUSTOMER_USER')" class="btn btn-success pull-right marginBottom10"
+           th:href="@{/reviews/new}">Give feedback</a>
+        <div id="blog" class="row">
+            <div class="col-md-10 blogShort" th:each="review: ${reviews}">
+                <em>Author: <a th:href="@{/info/user/{id}(id=${review.userId})}" target="_blank"
+                               th:each="user:${users}"
+                               th:if="${review.userId.equals(user.id)}"
+                               th:text="${user.lastName + ' ' + user.firstName}"></a></em>
+                <em><a target="_blank"
+                       th:text="${review.createdBy}"></a></em>
+                <article th:text="${review.text}"><p>
+                </p></article>
+            </div>
+        </div>
+    </div>
+
 </div>
 <script src="../static/js/bootstrap.min.js" th:href="@{/js/bootstrap.min.js}"></script>
 <script src="../static/js/popper.min.js" th:href="@{/js/popper.min.js}"></script>

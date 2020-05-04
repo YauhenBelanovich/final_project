@@ -14,6 +14,8 @@
 <div class="p-3 mb-2 bg-light text-dark page-holder bg-cover">
     <div class="container">
          <span sec:authorize="isAuthenticated()">
+              <a sec:authorize="hasRole('CUSTOMER_USER')" th:href="@{/orders/cart}" class="btn btn-light btn-lg float-right" role="button"
+                 aria-pressed="true">Cart</a>
             <a th:href="@{/logout}" class="btn btn-light btn-lg float-right" role="button" aria-pressed="true">Sign Out</a>
             <a th:href="@{/profile}" class="btn btn-light btn-lg float-right" role="button" aria-pressed="true">Personal</a>
         </span>
@@ -27,9 +29,24 @@
     </div>
 
 
+    <div th:if="${param.updateFalse}">
+        <div class="alert alert-danger">
+            News change did not work!
+        </div>
+    </div>
+    <div th:if="${param.updateTrue}">
+        <div class="alert alert-info">
+            Changed successfully!
+        </div>
+    </div>
     <form sec:authorize="hasRole('SALE_USER')" action="/articles/edit" method="post" th:object="${article}" th:action="@{/articles/edit}">
         <input type="hidden" th:field="*{articleId}"/>
-
+        <div class="float-left meta">
+            <div class="title h5">
+                Created by:
+                <a th:text="${article.date}"><b></b></a>
+            </div>
+        </div>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
                 <span class="input-group-text">Name</span>
@@ -43,31 +60,42 @@
                       placeholder="max 1000 characters"></textarea>
         </div>
 
-        <button type="submit" class="btn btn-light btn-lg">Change</button>
+        <button type="submit" class="btn btn-light btn-lg">Save changes</button>
     </form>
-
 
     <div class="row">
         <div class="col">
+            <div sec:authorize="hasRole('CUSTOMER_USER')" class="col-md-10 blogShort" th:each="article: ${article}">
+                <img src="/images/news.jpg" th:href="@{/images/news.jpg}" width="70" height="70" alt="post img"
+                     class="pull-left img-responsive thumb margin10 img-thumbnail">
+                <h3 th:text="${article.articleName}"></h3>
 
-            <table sec:authorize="hasRole('CUSTOMER_USER')" class="table table-bordered table-striped">
-                <thead class="table-info">
-                <tr>
-                    <th scope="col">Date</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Content</th>
-                    <th scope="col">Author</th>
-                </tr>
-                </thead>
-                <tbody th:each="article: ${article}">
-                <tr>
-                    <td th:text="${article.date}"></td>
-                    <td th:text="${article.articleName}"></td>
-                    <td th:text="${article.text}"></td>
-                    <td th:text="${user.lastName + ' ' + user.firstName}"></td>
-                </tr>
-                </tbody>
-            </table>
+                <em>Author <a th:href="@{/info/user/{id}(id=${article.userId})}" target="_blank"
+                              th:each="user:${users}"
+                              th:if="${article.userId.equals(user.id)}"
+                              th:text="${user.lastName + ' ' + user.firstName}"></a></em>
+                <em><a target="_blank"
+                       th:text="${article.date}"></a></em>
+                <article th:text="${article.text}"><p>
+                </p></article>
+            </div>
+
+            <div class="container">
+                <form action="/articles/{id}/comments/new" method="post"
+                      th:action="@{/articles/{id}/comments/new(id=${article.articleId})}">
+                    <div th:if="${param.error}">
+                        <div class="alert alert-danger">
+                            Need to write something
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" id="text" name="text" rows="3"
+                                  placeholder="max 200 characters"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-light btn-lg">Add comment</button>
+                </form>
+            </div>
+            <h4>Comments</h4>
             <div class="container" th:each="comment: ${article.comments}">
                 <div class="row">
                     <div class="col-8">

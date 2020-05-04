@@ -16,6 +16,7 @@ public class UserDTO {
     private String password;
     private RoleEnum role;
     private List<Article> articles;
+    private Boolean isDeleted;
 
     public Long getId() {
         return id;
@@ -81,17 +82,12 @@ public class UserDTO {
         this.articles = articles;
     }
 
-    @Override
-    public String toString() {
-        return "UserDTO{" +
-                "id=" + id +
-                ", lastName='" + lastName + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", patronymic='" + patronymic + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", role=" + role +
-                '}';
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 
     @Override
@@ -110,12 +106,26 @@ public class UserDTO {
                 Objects.equals(email, userDTO.email) &&
                 Objects.equals(password, userDTO.password) &&
                 role == userDTO.role &&
-                Objects.equals(articles, userDTO.articles);
+                Objects.equals(articles, userDTO.articles) &&
+                Objects.equals(isDeleted, userDTO.isDeleted);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, lastName, firstName, patronymic, email, password, role, articles);
+        return Objects.hash(id, lastName, firstName, patronymic, email, password, role, articles, isDeleted);
+    }
+
+    @Override
+    public String toString() {
+        return "UserDTO{" +
+                "id=" + id +
+                ", lastName='" + lastName + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", patronymic='" + patronymic + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                '}';
     }
 
 }

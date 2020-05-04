@@ -41,7 +41,7 @@ class ProfileControllerTest {
                 post("/profile/edit")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(content)
-        ).andExpect(status().isFound());
+        ).andExpect(status().isOk());
     }
 
 }

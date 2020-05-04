@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.validation.Valid;
 
 import com.gmail.yauhen2012.service.ArticleService;
 import com.gmail.yauhen2012.service.model.AddArticleDTO;
 import com.gmail.yauhen2012.service.model.ArticleDTO;
+import com.gmail.yauhen2012.springbootmodule.controller.APIExceptionHandler.RecordNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -54,7 +56,9 @@ public class ArticleAPIController {
     @GetMapping("/{id}")
     public ArticleDTO getArticle(@PathVariable Long id) {
         logger.debug("Get API getArticle method");
-        return articleService.findById(id);
+
+        Optional<ArticleDTO> article = Optional.ofNullable(articleService.findById(id));
+        return article.orElseThrow(() -> new RecordNotFoundException("Article id '" + id + "' does no exist"));
     }
 
     @DeleteMapping("/{id}")

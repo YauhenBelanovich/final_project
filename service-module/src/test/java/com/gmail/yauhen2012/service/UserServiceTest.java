@@ -174,6 +174,7 @@ public class UserServiceTest {
         user.setEmail(TEST_EMAIL);
         user.setPassword("passwordTest");
         user.setRole(RoleEnum.ADMINISTRATOR);
+        user.setDeleted(false);
 
         UserDetails userDetails = new UserDetails();
         userDetails.setFirstName("firstTest");

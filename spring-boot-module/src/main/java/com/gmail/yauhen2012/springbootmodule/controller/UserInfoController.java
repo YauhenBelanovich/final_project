@@ -25,11 +25,15 @@ public class UserInfoController {
     @GetMapping("/{id}")
     public String getUserInfoById(@PathVariable Long id, Model model) {
         UserDTO userDTO = userService.findUserById(id);
-        UserInformationDTO userInformationDTO = userService.findUserInformationById(id);
-        model.addAttribute("user", userDTO);
-        model.addAttribute("userInfo", userInformationDTO);
-        logger.debug("Get userInfoById method");
-        return "user_info";
+        if (userDTO != null) {
+            UserInformationDTO userInformationDTO = userService.findUserInformationById(id);
+            model.addAttribute("user", userDTO);
+            model.addAttribute("userInfo", userInformationDTO);
+            logger.debug("Get userInfoById method");
+            return "user_info";
+        }
+        logger.error("Get userById method! No users found!!!");
+        return "redirect:/?error";
     }
 
 }
