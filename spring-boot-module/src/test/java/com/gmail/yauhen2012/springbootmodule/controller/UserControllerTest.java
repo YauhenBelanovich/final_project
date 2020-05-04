@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gmail.yauhen2012.repository.model.RoleEnum;
 import com.gmail.yauhen2012.service.UserService;
 import com.gmail.yauhen2012.service.model.AddUserDTO;
+import com.gmail.yauhen2012.service.model.UserDTO;
+import com.gmail.yauhen2012.service.model.UserInformationDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
@@ -14,14 +16,18 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(controllers = UserController.class, excludeAutoConfiguration = UserDetailsServiceAutoConfiguration.class)
 @ActiveProfiles("test")
 class UserControllerTest {
+
+    private static final Long TEST_ID = 1L;
 
     @Autowired
     private MockMvc mockMvc;
@@ -52,7 +58,7 @@ class UserControllerTest {
 
     @Test
     @WithMockUser
-    void addUser_returnRedirect() throws Exception {
+    void addUser_returnOk() throws Exception {
         AddUserDTO user = new AddUserDTO();
         user.setPassword("test");
         user.setEmail("test@test.com");
@@ -69,4 +75,39 @@ class UserControllerTest {
         ).andExpect(status().isOk());
     }
 
+    @Test
+    @WithMockUser
+    void getUserPage_returnOk() throws Exception {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(TEST_ID);
+        when(userService.findUserById(TEST_ID)).thenReturn(userDTO);
+        UserInformationDTO userInformationDTO = new UserInformationDTO();
+        userInformationDTO.setUserId(TEST_ID);
+        when(userService.findUserInformationById(TEST_ID)).thenReturn(userInformationDTO);
+        this.mockMvc.perform(
+                get("/users/1")
+        ).andExpect(status().isOk())
+                .andExpect(view().name("user_info"));
+    }
+
+    @Test
+    @WithMockUser
+    void newPassword_returnRedirect() throws Exception {
+        when(userService.changePassword(TEST_ID)).thenReturn(true);
+        this.mockMvc.perform(
+                get("/users/1/newPassword")
+        ).andExpect(status().isFound())
+                .andExpect(redirectedUrl("/users?successfullyChanged"));
+    }
+
+    @Test
+    @WithMockUser
+    void newRole_returnRedirect() throws Exception {
+        when(userService.changeRole(TEST_ID, RoleEnum.CUSTOMER_USER)).thenReturn(true);
+        this.mockMvc.perform(
+                get("/users/1/newRole")
+                .param("role", "CUSTOMER_USER")
+        ).andExpect(status().isFound())
+                .andExpect(redirectedUrl("/users?successfullyChanged"));
+    }
 }

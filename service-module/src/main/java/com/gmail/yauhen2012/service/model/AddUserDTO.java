@@ -2,6 +2,7 @@ package com.gmail.yauhen2012.service.model;
 
 import java.util.Objects;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -12,17 +13,17 @@ public class AddUserDTO {
 
     @Size(min = 3, max = 40,
             message = "Must be between 3 and 40 characters long")
-    @Pattern(regexp = ValidationConstant.NAME_PATTERN,
+    @Pattern(regexp = ValidationConstant.LATIN_LETTERS_PATTERN,
             message = "Must contain only latin letters")
     private String lastName;
     @Size(min = 3, max = 20,
             message = "Must be between 3 and 40 characters long")
-    @Pattern(regexp = ValidationConstant.NAME_PATTERN,
+    @Pattern(regexp = ValidationConstant.LATIN_LETTERS_PATTERN,
             message = "Must contain only latin letters")
     private String firstName;
     @Size(min = 3, max = 40,
             message = "Must be between 3 and 40 characters long")
-    @Pattern(regexp = ValidationConstant.NAME_PATTERN,
+    @Pattern(regexp = ValidationConstant.LATIN_LETTERS_PATTERN,
             message = "Must contain only latin letters")
     private String patronymic;
     @Size(min = 3, max = 50,
@@ -32,7 +33,9 @@ public class AddUserDTO {
             message = "Incorrectly entered email")
     private String email;
     private String password;
+    @NotNull(message = "Is required!")
     private RoleEnum role;
+    private Boolean isDeleted;
 
     public String getLastName() {
         return lastName;
@@ -82,6 +85,14 @@ public class AddUserDTO {
         this.role = role;
     }
 
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -96,12 +107,13 @@ public class AddUserDTO {
                 Objects.equals(patronymic, that.patronymic) &&
                 Objects.equals(email, that.email) &&
                 Objects.equals(password, that.password) &&
-                role == that.role;
+                role == that.role &&
+                Objects.equals(isDeleted, that.isDeleted);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(lastName, firstName, patronymic, email, password, role);
+        return Objects.hash(lastName, firstName, patronymic, email, password, role, isDeleted);
     }
 
 }

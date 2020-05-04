@@ -32,7 +32,7 @@ public class ReviewControllerITTest {
                 get("/reviews/1/delete")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrl("/reviews"));
+                .andExpect(redirectedUrl("/reviews?successfullyChanged"));
     }
 
     @Test
@@ -44,7 +44,26 @@ public class ReviewControllerITTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                         .param("review_id", "1"))
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrl("/reviews"));
+                .andExpect(redirectedUrl("/reviews?successfullyChanged"));
     }
 
+    @Test
+    @WithMockUser(roles = "ADMINISTRATOR")
+    @Sql({"/data.sql"})
+    public void getReviews_returnAllReviews() throws Exception {
+        mvc.perform(
+                get("/reviews")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "CUSTOMER_USER")
+    @Sql({"/data.sql"})
+    public void getReviewsNewPage_returnAllReviews() throws Exception {
+        mvc.perform(
+                get("/reviews/new")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
 }

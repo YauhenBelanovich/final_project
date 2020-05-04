@@ -57,7 +57,10 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     public ArticleDTO findById(Long id) {
         Article article = articleRepository.findById(id);
-        return convertDatabaseArticleWithContentToDTO(article);
+        if (article != null) {
+            return convertDatabaseArticleWithContentToDTO(article);
+        }
+        return null;
     }
 
     @Override
@@ -71,14 +74,18 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     @Transactional
-    public void deleteArticleById(Long id) {
+    public Boolean deleteArticleById(Long id) {
         Article article = articleRepository.findById(id);
-        articleRepository.remove(article);
+        if (article != null) {
+            articleRepository.remove(article);
+            return true;
+        }
+        return false;
     }
 
     @Override
     @Transactional
-    public void update(ArticleDTO articleDTO) {
+    public Boolean update(ArticleDTO articleDTO) {
         Article article = articleRepository.findById(articleDTO.getArticleId());
 
         article.setArticleName(articleDTO.getArticleName());
@@ -86,8 +93,14 @@ public class ArticleServiceImpl implements ArticleService {
         articleContent.setText(articleDTO.getText());
         article.setArticleContent(articleContent);
         article.setSummary(getSummary(articleDTO.getText()));
-
         articleRepository.merge(article);
+
+        Article modifiedArticle = articleRepository.findById(articleDTO.getArticleId());
+        if (modifiedArticle.getArticleName().equals(articleDTO.getArticleName())
+                && modifiedArticle.getArticleContent().getText().equals(articleDTO.getText())) {
+            return true;
+        }
+        return false;
     }
 
     private ArticleDTO convertDatabaseArticleWithoutContentToDTO(Article article) {

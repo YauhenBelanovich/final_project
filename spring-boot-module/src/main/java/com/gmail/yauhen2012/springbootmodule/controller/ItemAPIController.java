@@ -1,15 +1,16 @@
 package com.gmail.yauhen2012.springbootmodule.controller;
 
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.validation.Valid;
 
 import com.gmail.yauhen2012.service.ItemService;
 import com.gmail.yauhen2012.service.exception.ItemExistsException;
 import com.gmail.yauhen2012.service.model.AddItemDTO;
 import com.gmail.yauhen2012.service.model.ItemDTO;
+import com.gmail.yauhen2012.springbootmodule.controller.APIExceptionHandler.RecordNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -37,7 +38,7 @@ public class ItemAPIController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Object saveItem(@RequestBody @Valid AddItemDTO addItemDTO, BindingResult bindingResult) throws IOException {
+    public Object saveItem(@RequestBody @Valid AddItemDTO addItemDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return getValidationMessage(bindingResult);
         }
@@ -61,7 +62,8 @@ public class ItemAPIController {
     @GetMapping("/{id}")
     public ItemDTO getItem(@PathVariable Long id) {
         logger.debug("Get API getItem method");
-        return itemService.findById(id);
+        Optional<ItemDTO> item = Optional.ofNullable(itemService.findById(id));
+        return item.orElseThrow(() -> new RecordNotFoundException("Item id '" + id + "' does no exist"));
     }
 
     @DeleteMapping("/{id}")

@@ -2,9 +2,11 @@ package com.gmail.yauhen2012.springbootmodule.controller;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+import java.util.Optional;
 
 import com.gmail.yauhen2012.service.OrderService;
 import com.gmail.yauhen2012.service.model.OrderDTO;
+import com.gmail.yauhen2012.springbootmodule.controller.APIExceptionHandler.RecordNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +34,8 @@ public class OrderAPIController {
     @GetMapping("/{id}")
     public OrderDTO getOrder(@PathVariable Long id) {
         logger.debug("Get API getOrder method");
-        return orderService.findById(id);
+        Optional<OrderDTO> order = Optional.ofNullable(orderService.findById(id));
+        return order.orElseThrow(() -> new RecordNotFoundException("Order id '" + id + "' does no exist"));
     }
 
 }

@@ -74,34 +74,46 @@ public class UserController {
                 userService.deleteUserById(id);
             }
             logger.debug("Get deleteUsers method");
+            return "redirect:/users?successfullyChanged";
         } else {
-            redirectAttributes.addFlashAttribute("noUsersSelectedMessage", "No users selected");
+            redirectAttributes.addFlashAttribute("noUsersSelectedMessage", "No users selected!!!");
+            logger.error("Get deleteUsers method! No users selected!!!");
+            return "redirect:/users?error";
         }
-        return "redirect:/users";
     }
 
     @GetMapping("/{id}/newPassword")
     public String sendNewPassword(@PathVariable Long id) {
-        userService.changePassword(id);
-        logger.debug("Get new password method");
-        return "redirect:/users";
+        if (userService.changePassword(id)) {
+            logger.debug("Get newPassword method");
+            return "redirect:/users?successfullyChanged";
+        }
+        logger.error("Get newPassword method! No users found!!!");
+        return "redirect:/users?error";
     }
 
     @GetMapping("/{id}/newRole")
     public String setNewRole(@PathVariable Long id, @RequestParam(name = "role") RoleEnum role) {
-        userService.changeRole(id, role);
-        logger.debug("Get new password method");
-        return "redirect:/users";
+        if (userService.changeRole(id, role)) {
+            logger.debug("Get newRole method");
+            return "redirect:/users?successfullyChanged";
+        }
+        logger.error("Get newRole method! No users found!!!");
+        return "redirect:/users?error";
     }
 
     @GetMapping("/{id}")
     public String getUserById(@PathVariable Long id, Model model) {
         UserDTO userDTO = userService.findUserById(id);
-        UserInformationDTO userInformationDTO = userService.findUserInformationById(id);
-        model.addAttribute("user", userDTO);
-        model.addAttribute("userInfo", userInformationDTO);
-        logger.debug("Get articleById method");
-        return "user_info";
+        if (userDTO != null) {
+            UserInformationDTO userInformationDTO = userService.findUserInformationById(id);
+            model.addAttribute("user", userDTO);
+            model.addAttribute("userInfo", userInformationDTO);
+            logger.debug("Get userById method");
+            return "user_info";
+        }
+        logger.error("Get userById method! No users found!!!");
+        return "redirect:/?error";
     }
 
 }

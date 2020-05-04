@@ -45,13 +45,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http.authorizeRequests()
+                .antMatchers("/")
+                .hasAnyRole(
+                        RoleEnum.SALE_USER.name(),
+                        RoleEnum.ADMINISTRATOR.name(),
+                        RoleEnum.CUSTOMER_USER.name())
                 .antMatchers("/users/**")
                 .hasRole(RoleEnum.ADMINISTRATOR.name())
                 .antMatchers("/reviews", "/reviews/**/delete", "/reviews/**/newStatus")
                 .hasRole(RoleEnum.ADMINISTRATOR.name())
                 .antMatchers("/reviews/new")
                 .hasRole(RoleEnum.CUSTOMER_USER.name())
-                .antMatchers("/items/**/delete", "/items/**/copy")
+                .antMatchers("/items/**/delete", "/items/**/copy", "/items/uploadFile")
                 .hasRole(RoleEnum.SALE_USER.name())
                 .antMatchers("/items/**/")
                 .hasAnyRole(RoleEnum.SALE_USER.name(),

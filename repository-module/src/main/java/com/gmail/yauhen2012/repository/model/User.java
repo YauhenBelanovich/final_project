@@ -16,8 +16,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.SQLDelete;
+
 @Entity
 @Table(name = "user")
+@SQLDelete(sql = "UPDATE user SET is_deleted = '1' WHERE id = ?")
 public class User {
 
     @Id
@@ -34,20 +37,26 @@ public class User {
 
     @OneToOne(fetch = FetchType.LAZY,
             mappedBy = "user",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            },
+            orphanRemoval = false)
     private UserDetails userDetails;
 
     @OneToOne(fetch = FetchType.LAZY,
             mappedBy = "user",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            },
+            orphanRemoval = false)
     private UserContactInformation userContactInformation;
 
     @OneToMany(cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE
-    }, orphanRemoval = true)
+    }, orphanRemoval = false)
     @JoinColumn(name = "user_id")
     private List<Review> reviews;
 
@@ -55,9 +64,12 @@ public class User {
             cascade = {
                     CascadeType.PERSIST,
                     CascadeType.MERGE
-            }, orphanRemoval = true)
+            }, orphanRemoval = false)
     @JoinColumn(name = "user_id")
     private List<Order> orders;
+
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
 
     public Long getId() {
         return id;
@@ -123,6 +135,14 @@ public class User {
         this.orders = orders;
     }
 
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -139,12 +159,13 @@ public class User {
                 Objects.equals(userDetails, user.userDetails) &&
                 Objects.equals(userContactInformation, user.userContactInformation) &&
                 Objects.equals(reviews, user.reviews) &&
-                Objects.equals(orders, user.orders);
+                Objects.equals(orders, user.orders) &&
+                Objects.equals(isDeleted, user.isDeleted);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, password, role, userDetails, userContactInformation, reviews, orders);
+        return Objects.hash(id, email, password, role, userDetails, userContactInformation, reviews, orders, isDeleted);
     }
 
 }

@@ -51,7 +51,10 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDTO findById(Long id) {
         Order order = orderRepository.findById(id);
-        return convertDatabaseOrderToDTO(order);
+        if (order != null) {
+            return convertDatabaseOrderToDTO(order);
+        }
+        return null;
     }
 
     @Override
@@ -77,10 +80,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void changeStatus(Long id, OrderStatusEnum status) {
+    public Boolean changeStatus(Long id, OrderStatusEnum status) {
         Order order = orderRepository.findById(id);
-        order.setStatus(status);
-        orderRepository.merge(order);
+        if (order != null && status != null) {
+            order.setStatus(status);
+            orderRepository.merge(order);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -114,27 +121,40 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void deleteItemByIdFromOrder(Long orderId, Long itemId) {
+    public Boolean deleteItemByIdFromOrder(Long orderId, Long itemId) {
         Order order = orderRepository.findById(orderId);
+        if (order != null) {
 
-        List<OrderDetails> orderDetailsList = order.getOrderDetailsList();
-        orderDetailsList.removeIf(orderDetails -> orderDetails.getItemId().equals(itemId));
-        order.setOrderDetailsList(orderDetailsList);
+            List<OrderDetails> orderDetailsList = order.getOrderDetailsList();
+            orderDetailsList.removeIf(orderDetails -> orderDetails.getItemId().equals(itemId));
+            order.setOrderDetailsList(orderDetailsList);
 
-        order.setTotalPrice(orderDetailsList.stream()
-                .map(OrderDetails::getItemId)
-                .map(itemRepository::findById)
-                .map(Item::getPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add));
-        orderRepository.merge(order);
+            order.setTotalPrice(orderDetailsList.stream()
+                    .map(OrderDetails::getItemId)
+                    .map(itemRepository::findById)
+                    .map(Item::getPrice)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add));
+            orderRepository.merge(order);
+            return !orderRepository.findById(orderId)
+                    .getOrderDetailsList()
+                    .stream()
+                    .map(OrderDetails::getItemId)
+                    .findAny()
+                    .equals(itemId);
+        }
+        return false;
     }
 
     @Override
     @Transactional
-    public void sendCart(Long orderId) {
+    public Boolean sendCart(Long orderId) {
         Order order = orderRepository.findById(orderId);
-        order.setStatus(OrderConstant.SEND_CART_ORDER_STATUS);
-        orderRepository.merge(order);
+        if (order != null) {
+            order.setStatus(OrderConstant.SEND_CART_ORDER_STATUS);
+            orderRepository.merge(order);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -164,11 +184,16 @@ public class OrderServiceImpl implements OrderService {
         orderDTO.setStatus(order.getStatus());
         orderDTO.setTotalPrice(order.getTotalPrice());
 
-        UserDTO userDTO = userService.findUserById(order.getUserId());
-        orderDTO.setUserEmail(userDTO.getEmail());
+        if (order.getUserId()!=null) {
+            UserDTO userDTO = userService.findUserById(order.getUserId());
+            orderDTO.setUserEmail(userDTO.getEmail());
 
         UserInformationDTO userInformationDTO = userService.findUserInformationById(order.getUserId());
         orderDTO.setUserTel(userInformationDTO.getTelephone());
+        } else {
+            orderDTO.setUserEmail("deleted");
+            orderDTO.setUserTel("deleted");
+        }
 
         List<OrderDetailsDTO> orderDetailsDTOList =
                 convertOrderDetailsListToOrderDetailsDTOLIst(order.getOrderDetailsList());

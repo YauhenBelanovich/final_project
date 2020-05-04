@@ -16,9 +16,9 @@ public interface UserService {
 
     List<UserDTO> getUsersByPage(String page);
 
-    void changeRole(Long id, RoleEnum role);
+    Boolean changeRole(Long id, RoleEnum role);
 
-    void changePassword(Long id);
+    Boolean changePassword(Long id);
 
     UserDTO findUserById(Long id);
 
@@ -26,6 +26,6 @@ public interface UserService {
 
     UserInformationDTO findUserInformationById(Long id);
 
-    void update(UserInformationDTO userInformation);
+    Boolean update(UserInformationDTO userInformation);
 
 }

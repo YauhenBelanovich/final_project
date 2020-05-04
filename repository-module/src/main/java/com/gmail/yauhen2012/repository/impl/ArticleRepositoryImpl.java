@@ -14,15 +14,15 @@ public class ArticleRepositoryImpl extends GenericDAOImpl<Long, Article> impleme
     @Override
     @SuppressWarnings("unchecked")
     public List<Article> getArticleByPageSortedByDate(
-        int startPosition,
-        int itemsByPage
+            int startPosition,
+            int itemsByPage
     ) {
-            String query = "from " + entityClass.getName() + " a ORDER BY a.date DESC";
-            Query q = entityManager.createQuery(query);
-            q.setFirstResult(startPosition);
-            q.setMaxResults(itemsByPage);
+        String query = "from " + entityClass.getName() + " a ORDER BY a.date DESC";
+        Query q = entityManager.createQuery(query);
+        q.setFirstResult(startPosition);
+        q.setMaxResults(itemsByPage);
 
-            return q.getResultList();
+        return q.getResultList();
     }
 
     @Override

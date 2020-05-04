@@ -11,6 +11,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -42,19 +43,21 @@ class ReviewControllerTest {
     @Test
     @WithMockUser
     void getDeleteReview_returnRedirect() throws Exception {
+        when(reviewService.deleteReviewById(1L)).thenReturn(true);
         this.mockMvc.perform(
                 get("/reviews/1/delete")
         ).andExpect(status().isFound())
-                .andExpect(redirectedUrl("/reviews"));
+                .andExpect(redirectedUrl("/reviews?successfullyChanged"));
     }
 
     @Test
     @WithMockUser
     void getNewStatusReview_returnRedirect() throws Exception {
+        when(reviewService.changeStatus(1L)).thenReturn(true);
         this.mockMvc.perform(
                 get("/reviews/1/newStatus")
         ).andExpect(status().isFound())
-                .andExpect(redirectedUrl("/reviews"));
+                .andExpect(redirectedUrl("/reviews?successfullyChanged"));
     }
 
 }

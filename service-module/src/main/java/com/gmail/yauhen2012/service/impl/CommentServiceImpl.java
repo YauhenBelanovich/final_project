@@ -26,8 +26,11 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public Long deleteCommentById(Long id) {
         Comment comment = commentRepository.findById(id);
-        commentRepository.remove(comment);
-        return comment.getArticleId();
+        if (comment != null) {
+            commentRepository.remove(comment);
+            return comment.getArticleId();
+        }
+        return null;
     }
 
     private static Comment convertAddCommentDTOToDatabaseComment(AddCommentDTO addCommentDTO) {

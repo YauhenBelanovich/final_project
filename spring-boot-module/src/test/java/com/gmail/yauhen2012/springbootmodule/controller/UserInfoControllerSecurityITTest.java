@@ -52,4 +52,22 @@ public class UserInfoControllerSecurityITTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @WithMockUser(roles = "CUSTOMER_USER")
+    public void getUserInfoLikeCustomer_returnOk() throws Exception {
+        mvc.perform(
+                get("/info/user/1")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "SALE_USER")
+    public void getUserInfoLikeSaleUser_returnOk() throws Exception {
+        mvc.perform(
+                get("/info/user/1")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
+                .andExpect(status().isOk());
+    }
+
 }

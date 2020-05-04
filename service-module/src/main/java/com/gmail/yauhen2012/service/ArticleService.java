@@ -15,8 +15,8 @@ public interface ArticleService {
 
     List<ArticleDTO> findAllSorted();
 
-    void deleteArticleById(Long id);
+    Boolean deleteArticleById(Long id);
 
-    void update(ArticleDTO articleDTO);
+    Boolean update(ArticleDTO articleDTO);
 
 }

@@ -8,6 +8,7 @@ public class AddArticleDTO {
 
     @NotEmpty(message = "is required")
     private String articleName;
+    @NotEmpty(message = "is required")
     @Size(max = 1000, message = "Must be max 1000 characters long")
     private String text;
     private Long userId;

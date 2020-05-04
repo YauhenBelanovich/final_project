@@ -13,7 +13,7 @@
 <div class="p-3 mb-2 bg-light text-dark page-holder bg-cover">
     <div class="container">
         <nav class="navbar navbar-light bg-light">
-            <a class="navbar-brand" th:href="@{/users}">
+            <a class="navbar-brand" th:href="@{/}">
                 <img src="/images/doc.png" th:href="@{/images/doc.png}" width="35" height="35" class="d-inline-block align-top" alt="">
                 <b>Enter information about yourself</b>
             </a>
@@ -58,6 +58,7 @@
                        aria-describedby="inputGroup-sizing-default" placeholder="Enter email">
             </div>
 
+            <span th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></span>
             <div class="form-check form-check-inline">
                 <input th:field="*{role}" class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1"
                        value="ADMINISTRATOR">
@@ -84,6 +85,7 @@
             </small>
         </form>
     </div>
+    <a th:href="@{/users}" class="btn btn-light btn-lg" role="button" aria-pressed="true">Back to the users list</a>
 </div>
 <script src="../static/js/bootstrap.min.js" th:href="@{/js/bootstrap.min.js}"></script>
 <script src="../static/js/popper.min.js" th:href="@{/js/popper.min.js}"></script>

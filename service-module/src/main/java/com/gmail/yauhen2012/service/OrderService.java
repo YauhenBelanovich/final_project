@@ -14,15 +14,15 @@ public interface OrderService {
 
     void add(AddOrderDTO addOrderDTO);
 
-    void changeStatus(Long id, OrderStatusEnum status);
+    Boolean changeStatus(Long id, OrderStatusEnum status);
 
     OrderDTO findOrderByUserIdWithStatusNEW(Long userId);
 
     void addItemsToOrder(Long oderId, List<Long> itemIdsList);
 
-    void deleteItemByIdFromOrder(Long orderId, Long ItemId);
+    Boolean deleteItemByIdFromOrder(Long orderId, Long ItemId);
 
-    void sendCart(Long orderId);
+    Boolean sendCart(Long orderId);
 
     List<OrderDTO> getSortedOrdersByPage(String page);
 

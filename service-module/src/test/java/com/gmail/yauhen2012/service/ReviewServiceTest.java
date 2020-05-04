@@ -63,6 +63,8 @@ public class ReviewServiceTest {
 
     @Test
     public void deleteReview_verifyCallMethod() {
+        Review review = setReview();
+        when(reviewRepository.findById(TEST_ID)).thenReturn(review);
         reviewService.deleteReviewById(TEST_ID);
         verify(reviewRepository, times(1)).remove(any());
     }

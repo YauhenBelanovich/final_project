@@ -39,7 +39,7 @@ public class ProfileControllerITTest {
         mvc.perform(
                 post("/profile/edit")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-        ).andExpect(status().isFound());
+        ).andExpect(status().isOk());
     }
 
 }

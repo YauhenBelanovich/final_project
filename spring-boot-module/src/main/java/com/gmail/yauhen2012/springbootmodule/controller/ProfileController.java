@@ -36,6 +36,7 @@ public class ProfileController {
             UserInformationDTO userInformationDTO = userService.findUserInformationById(id);
 
             model.addAttribute("user", userInformationDTO);
+            logger.debug("Get userInformationPage method");
             return "profile";
         } else {
             return "redirect:/login?logout";
@@ -50,6 +51,7 @@ public class ProfileController {
             UserInformationDTO userInformationDTO = userService.findUserInformationById(id);
 
             model.addAttribute("user", userInformationDTO);
+            logger.debug("Get editUser method");
             return "profile_edit";
         } else {
             return "redirect:/login?logout";
@@ -62,9 +64,12 @@ public class ProfileController {
             model.addAttribute("user", userInformation);
             return "profile_edit";
         } else {
-            userService.update(userInformation);
-            logger.debug("Post addUser method");
-            return "redirect:/profile";
+            if (userService.update(userInformation)) {
+                logger.debug("Post editUser method");
+                return "redirect:/profile?success";
+            }
+            logger.error("Post editUser method. Something went wrong. Changes not saved");
+            return "redirect:/profile?error";
         }
     }
 

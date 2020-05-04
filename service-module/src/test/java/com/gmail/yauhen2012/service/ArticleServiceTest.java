@@ -38,7 +38,6 @@ public class ArticleServiceTest {
     private static final String TEST_PAGE = "0";
     private static final int TEST_PAGE_INT = 0;
 
-
     @BeforeEach
     public void setup() {
         articleService = new ArticleServiceImpl(articleRepository);
@@ -51,18 +50,18 @@ public class ArticleServiceTest {
         verify(articleRepository, times(1)).add(any());
     }
 
-        @Test
-        public void findArticleByID_returnArticle() {
-            Article article = setArticle();
-            when(articleRepository.findById(TEST_ID)).thenReturn(article);
-            ArticleDTO articleDTO = articleService.findById(TEST_ID);
+    @Test
+    public void findArticleByID_returnArticle() {
+        Article article = setArticle();
+        when(articleRepository.findById(TEST_ID)).thenReturn(article);
+        ArticleDTO articleDTO = articleService.findById(TEST_ID);
 
-            Assertions.assertThat(articleDTO.getArticleName().equals(article.getArticleName()));
-            verify(articleRepository, times(1)).findById(anyLong());
+        Assertions.assertThat(articleDTO.getArticleName().equals(article.getArticleName()));
+        verify(articleRepository, times(1)).findById(anyLong());
 
-            Assertions.assertThat(articleDTO).isNotNull();
+        Assertions.assertThat(articleDTO).isNotNull();
 
-        }
+    }
 
     @Test
     public void deleteArticle_verifyCallMethod() {
@@ -82,7 +81,8 @@ public class ArticleServiceTest {
             article.setArticleId(i);
             articles.add(article);
         }
-        when(articleRepository.getArticleByPageSortedByDate(PaginationUtil.findStartPosition(TEST_PAGE_INT), PaginationConstant.ITEMS_BY_PAGE)).thenReturn(articles);
+        when(articleRepository.getArticleByPageSortedByDate(PaginationUtil.findStartPosition(TEST_PAGE_INT),
+                PaginationConstant.ITEMS_BY_PAGE)).thenReturn(articles);
         List<ArticleDTO> articleDTOS = articleService.getArticlesWithoutContentByPage(TEST_PAGE);
 
         Assertions.assertThat(articles.size()).isEqualTo(articleDTOS.size());

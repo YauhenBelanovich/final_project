@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.gmail.yauhen2012.repository.model.RoleEnum;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.core.Authentication;
@@ -54,9 +55,9 @@ public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSu
     protected String determineTargetUrl(final Authentication authentication) {
 
         Map<String, String> roleTargetUrlMap = new HashMap<>();
-        roleTargetUrlMap.put("ROLE_SALE_USER", "/");
-        roleTargetUrlMap.put("ROLE_CUSTOMER_USER", "/");
-        roleTargetUrlMap.put("ROLE_ADMINISTRATOR", "/");
+        roleTargetUrlMap.put("ROLE_" + RoleEnum.SALE_USER.name(), "/");
+        roleTargetUrlMap.put("ROLE_" + RoleEnum.CUSTOMER_USER.name(), "/");
+        roleTargetUrlMap.put("ROLE_" + RoleEnum.ADMINISTRATOR.name(), "/");
 
         final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         for (final GrantedAuthority grantedAuthority : authorities) {

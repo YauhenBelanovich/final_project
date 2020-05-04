@@ -2,13 +2,13 @@ package com.gmail.yauhen2012.service.impl;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.transaction.Transactional;
 
 import com.gmail.yauhen2012.repository.ReviewRepository;
 import com.gmail.yauhen2012.repository.model.Review;
 import com.gmail.yauhen2012.service.ReviewService;
 import com.gmail.yauhen2012.service.constant.PaginationConstant;
+import com.gmail.yauhen2012.service.constant.ReviewConstant;
 import com.gmail.yauhen2012.service.model.AddReviewDTO;
 import com.gmail.yauhen2012.service.model.ReviewDTO;
 import com.gmail.yauhen2012.service.util.PaginationUtil;
@@ -52,21 +52,38 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
-    public void deleteReviewById(Long id) {
+    public Boolean deleteReviewById(Long id) {
         Review review = reviewRepository.findById(id);
-        reviewRepository.remove(review);
+        if (review != null) {
+            reviewRepository.remove(review);
+            return true;
+        }
+        return false;
     }
 
     @Override
     @Transactional
-    public void changeStatus(Long id) {
+    public Boolean changeStatus(Long id) {
         Review review = reviewRepository.findById(id);
-        if (review.getStatus()) {
-            review.setStatus(false);
-        } else {
-            review.setStatus(true);
+        if (review != null) {
+            if (review.getStatus()) {
+                review.setStatus(false);
+            } else {
+                review.setStatus(true);
+            }
+            reviewRepository.merge(review);
+            return true;
         }
-        reviewRepository.merge(review);
+        return false;
+    }
+
+    @Override
+    @Transactional
+    public List<ReviewDTO> getReviewSortedByDate() {
+        List<Review> reviews = reviewRepository.getActiveReviewsSortedByDate();
+        return reviews.stream()
+                .map(this::convertDatabaseObjectToDTO)
+                .collect(Collectors.toList());
     }
 
     private ReviewDTO convertDatabaseObjectToDTO(Review review) {
@@ -82,7 +99,7 @@ public class ReviewServiceImpl implements ReviewService {
     private Review convertAddReviewDTOToDatabaseReview(AddReviewDTO addReviewDTO) {
         Review review = new Review();
         review.setText(addReviewDTO.getText());
-        review.setStatus(addReviewDTO.getStatus());
+        review.setStatus(ReviewConstant.DEFAULT_REVIEW_STATUS);
         review.setUserId(addReviewDTO.getUserId());
         return review;
     }

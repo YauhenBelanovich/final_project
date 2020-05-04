@@ -33,9 +33,9 @@ public class UserControllerITTest {
         mvc.perform(
                 post("/users/delete")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                        .param("id", "1")
+                        .param("ids", "1")
         ).andExpect(status().isFound())
-                .andExpect(redirectedUrl("/users"));
+                .andExpect(redirectedUrl("/users?successfullyChanged"));
     }
 
     @Test
@@ -47,7 +47,7 @@ public class UserControllerITTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                         .param("id", "1")
         ).andExpect(status().isFound())
-                .andExpect(redirectedUrl("/users"));
+                .andExpect(redirectedUrl("/users?successfullyChanged"));
     }
 
     @Test
@@ -60,7 +60,7 @@ public class UserControllerITTest {
                         .param("id", "1")
                         .param("role", "CUSTOMER_USER")
         ).andExpect(status().isFound())
-                .andExpect(redirectedUrl("/users"));
+                .andExpect(redirectedUrl("/users?successfullyChanged"));
     }
 
     @Test

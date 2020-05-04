@@ -56,16 +56,22 @@ public class ReviewController {
 
     @GetMapping("/{id}/delete")
     public String deleteItemById(@PathVariable Long id) {
-        reviewService.deleteReviewById(id);
-        logger.debug("Get deleteReviewById method");
-        return "redirect:/reviews";
+        if (reviewService.deleteReviewById(id)) {
+            logger.debug("Get deleteReviewById method");
+            return "redirect:/reviews?successfullyChanged";
+        }
+        logger.error("Get deleteReviewById method. No review is found!!!");
+        return "redirect:/reviews?error";
     }
 
     @GetMapping("/{id}/newStatus")
     public String setNewStatus(@PathVariable Long id) {
-        reviewService.changeStatus(id);
-        logger.debug("Get new status method");
-        return "redirect:/reviews";
+        if (reviewService.changeStatus(id)) {
+            logger.debug("Get newStatus method");
+            return "redirect:/reviews?successfullyChanged";
+        }
+        logger.error("Get newStatus method. No review is found!!!");
+        return "redirect:/reviews?error";
     }
 
     @GetMapping("/new")
@@ -81,14 +87,13 @@ public class ReviewController {
             model.addAttribute("review", reviewDTO);
             return "review_new";
         } else {
-
             if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDetails) {
                 reviewDTO.setUserId(getCurrentUserId());
-                reviewDTO.setStatus(false);
                 reviewService.add(reviewDTO);
                 logger.debug("Post addReview method");
-                return "redirect:/articles";
+                return "redirect:/reviews/new?successfullyAdded";
             } else {
+                logger.error("Post addReview method fell!");
                 return "redirect:/login?logout";
             }
         }
