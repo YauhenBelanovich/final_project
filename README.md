@@ -17,6 +17,14 @@
 * Using _GitHub Actions_ to Build a Project
 * Using _Liquibase_ for Migration
 
+[Task condition/part 1](https://drive.google.com/file/d/18NNcnNCpGsFwbAMDOXuLGm8ppddE9ucn/view?usp=sharing)
+
+[Task condition/part 2](https://drive.google.com/file/d/1HuA_2jX_5E4TE4CRT-3JKS8ngdS4hMG1/view?usp=sharing)
+
+[Task condition/part 3](https://drive.google.com/file/d/1r9CMGZzN8lqm44YF67LLHAfaWvSrc-GH/view?usp=sharing)
+
+[Task condition/part 4](https://drive.google.com/file/d/1EfTSE9ovdexv6aIkuOm7CuObqhH1aflo/view?usp=sharing)
+
 ## Getting started
 
 ### _application.properties_
