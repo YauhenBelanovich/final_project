@@ -1,5 +1,5 @@
 # Online store/Course project
-* Final project on the course _"Technologies for the development of interprise solutions in Java"_
+* Final project on the course _"Technologies for the development of enterprise solutions in Java"_
     * [IT-Academy](https://www.it-academy.by/)
     * Сreated during April 2020
 
